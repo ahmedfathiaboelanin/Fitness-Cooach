@@ -6,17 +6,19 @@
 
 :root {
   color-scheme: dark;
-  --fire-orange: #EF233C;
-  --fire-ember: #B91C1C;
-  --fire-yellow: #FFD166;
-  /* eye-comfort dark (warm, not pure black) */
-  --page-bg: #171210;
-  --page-ink: #ECE3D6;
-  --muted: #B9A894;
-  --surface: #221A15;
-  --surface-2: #1C1512;
-  --line: rgba(255, 235, 210, 0.10);
-  --card-shadow: 0 18px 45px -20px rgba(0, 0, 0, 0.55);
+  /* chrome-red pulled from the MS logo: bright highlight → rich red → deep burgundy */
+  --fire-orange: #C8102E;
+  --fire-ember: #7A0E1D;
+  --fire-yellow: #FF8A94;
+  --silver: #D8DCE2;
+  /* near-black surfaces to match the logo backdrop */
+  --page-bg: #0C0A0B;
+  --page-ink: #EDE6DA;
+  --muted: #A89C8E;
+  --surface: #171214;
+  --surface-2: #120E10;
+  --line: rgba(216, 220, 226, 0.10);
+  --card-shadow: 0 14px 34px -22px rgba(0, 0, 0, 0.6);
 }
 
 [data-theme='light'] {
@@ -62,37 +64,53 @@ body {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-/* Solid fire accent text (no gradient) — theme-aware for readability */
+/* Solid chrome-red accent text (no gradient) — theme-aware for readability */
 .text-fire {
-  color: #FB7185;
+  color: #FF7A88;
 }
 [data-theme='light'] .text-fire {
-  color: #BE123C;
+  color: #A31226;
 }
 
-/* Fire button — softer glow for comfort */
+/* Chrome-red button — metallic top sheen like the logo plates */
 .btn-fire {
   position: relative;
   overflow: hidden;
   isolation: isolate;
-  background: linear-gradient(135deg, var(--fire-yellow) 0%, var(--fire-orange) 50%, var(--fire-ember) 100%);
-  background-size: 180% 180%;
-  box-shadow: 0 10px 28px -12px rgba(185, 28, 28, 0.55), inset 0 1px 0 rgba(255,255,255,0.30);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 42%),
+    linear-gradient(135deg, var(--fire-yellow) 0%, var(--fire-orange) 55%, var(--fire-ember) 100%);
+  background-size: auto, 180% 180%;
+  box-shadow: 0 8px 22px -12px rgba(200, 16, 46, 0.5), inset 0 1px 0 rgba(255,255,255,0.35);
   transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
 }
 .btn-fire:hover {
-  filter: saturate(1.08);
-  box-shadow: 0 14px 34px -12px rgba(185, 28, 28, 0.6), inset 0 1px 0 rgba(255,255,255,0.35);
+  filter: saturate(1.06);
+  box-shadow: 0 12px 26px -12px rgba(200, 16, 46, 0.55), inset 0 1px 0 rgba(255,255,255,0.4);
 }
 .btn-fire:active { transform: scale(.97); }
 .btn-fire::after {
   content: '';
   position: absolute;
   top: 0; bottom: 0; width: 45%;
-  background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent);
   transform: translateX(-120%) skewX(-15deg);
-  animation: shine 3.6s ease-in-out infinite;
+  animation: shine 5s ease-in-out infinite;
 }
+
+/* Calm WhatsApp button — muted green, gentle glow */
+.btn-wa {
+  background: #2A8A54;
+  color: #fff;
+  box-shadow: 0 8px 22px -12px rgba(42, 138, 84, 0.5), inset 0 1px 0 rgba(255,255,255,0.22);
+  transition: filter .2s ease, transform .15s ease, box-shadow .2s ease, background .2s ease;
+}
+.btn-wa:hover {
+  background: #2F9A5E;
+  box-shadow: 0 12px 26px -12px rgba(42, 138, 84, 0.55), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.btn-wa:active { transform: scale(.97); }
+[data-theme='light'] .btn-wa { color: #fff !important; }
 
 /* Theme-aware card */
 .card-fire {
@@ -104,9 +122,9 @@ body {
   transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .3s ease;
 }
 .card-fire:hover {
-  transform: translateY(-4px);
-  border-color: rgba(225, 29, 46, 0.45);
-  box-shadow: 0 18px 40px -18px rgba(185, 28, 28, 0.4);
+  transform: translateY(-2px);
+  border-color: rgba(200, 16, 46, 0.4);
+  box-shadow: 0 14px 32px -20px rgba(122, 14, 29, 0.45);
 }
 
 .card-light {
@@ -115,16 +133,42 @@ body {
   border-color: var(--line);
 }
 
-/* Ember glow blobs — dimmer for comfort */
+/* Ember glow blobs — faint for comfort */
 .ember-blob {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(100px);
-  opacity: 0.32;
+  filter: blur(110px);
+  opacity: 0.2;
   pointer-events: none;
 }
 [data-theme='light'] .ember-blob {
-  opacity: 0.16;
+  opacity: 0.1;
+}
+
+/* Marquee strip — gently desaturated so it doesn't shout */
+.marquee-soft {
+  filter: saturate(0.82) brightness(0.98);
+}
+
+/* Language toggle — gradient brand chip in dark, calm surface chip in light */
+[data-theme='light'] .lang-toggle {
+  background: var(--surface);
+  color: var(--page-ink);
+  border: 1px solid var(--line);
+  box-shadow: var(--card-shadow);
+}
+[data-theme='light'] .lang-toggle:hover {
+  filter: none;
+  border-color: rgba(200, 16, 46, 0.35);
+}
+
+/* Mobile menu panel — solid theme-aware backdrop so links stay readable */
+.menu-panel {
+  background: color-mix(in srgb, var(--page-bg) 96%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.55);
 }
 
 /* Marquee strip */
@@ -147,7 +191,7 @@ body {
 .chat-scroll::-webkit-scrollbar { width: 6px; }
 .chat-scroll::-webkit-scrollbar-thumb { @apply bg-rose-500/40 rounded-full; }
 
-::selection { background: #E11D2E; color: #FFF7ED; }
+::selection { background: #C8102E; color: #FFF7ED; }
 
 /* ---------- Light-theme mapping for hardcoded dark classes ---------- */
 /* These overrides flip existing dark-first markup to the warm light theme
@@ -164,13 +208,13 @@ body {
 [data-theme='light'] .text-stone-400 { color: var(--muted) !important; }
 [data-theme='light'] .text-stone-500 { color: #6B5F4F !important; }
 /* bright dark-mode accents become deep, readable tones on cream */
-[data-theme='light'] .text-rose-400 { color: #BE123C !important; }
-[data-theme='light'] .text-rose-300 { color: #9F1239 !important; }
+[data-theme='light'] .text-rose-400 { color: #A31226 !important; }
+[data-theme='light'] .text-rose-300 { color: #7F1D1D !important; }
 [data-theme='light'] .text-green-400 { color: #15803D !important; }
 [data-theme='light'] .text-amber-300 { color: #92400E !important; }
 [data-theme='light'] .text-amber-400 { color: #B45309 !important; }
 [data-theme='light'] .hover\:text-white:hover:not([class*='bg-']) { color: #3B342B !important; }
-[data-theme='light'] .hover\:text-rose-300:hover { color: #9F1239 !important; }
+[data-theme='light'] .hover\:text-rose-300:hover { color: #7F1D1D !important; }
 [data-theme='light'] .border-white\/10 { border-color: var(--line) !important; }
 [data-theme='light'] .border-white\/15 { border-color: var(--line) !important; }
 [data-theme='light'] .border-white\/20 { border-color: var(--line) !important; }
@@ -180,10 +224,13 @@ body {
 [data-theme='light'] .from-stone-950\/60,
 [data-theme='light'] .via-stone-950\/85,
 [data-theme='light'] .to-stone-950 { --tw-gradient-from: rgba(250,246,238,0.7); --tw-gradient-to: #FAF6EE; }
+/* package highlight card: keep it light-friendly (soft rose tint, no dark foot) */
+[data-theme='light'] .from-rose-600\/25 { --tw-gradient-from: rgba(217, 83, 106, 0.10) !important; }
+[data-theme='light'] .to-stone-900 { --tw-gradient-to: var(--surface) !important; }
 
 /* Softer focus for eyes */
 :focus-visible {
-  outline: 2px solid rgba(225, 29, 46, 0.6);
+  outline: 2px solid rgba(200, 16, 46, 0.55);
   outline-offset: 2px;
   border-radius: 6px;
 }

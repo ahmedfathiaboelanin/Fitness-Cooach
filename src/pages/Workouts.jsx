@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Flame, ArrowRight } from 'lucide-react'
 import { useSiteStore } from '../store/useSiteStore'
 import { useT, useL } from '../i18n/useT'
 import { WorkoutCard } from '../components/cards'
@@ -17,7 +18,7 @@ export default function Workouts() {
   return (
     <div className="bg-stone-950 text-stone-100 min-h-screen">
       <div className="container-x py-10">
-        <span className="text-[11px] font-extrabold tracking-[0.2em] text-rose-400 bg-rose-500/10 border border-rose-500/25 px-3 py-1.5 rounded-full">{t('trainWith')} {pick(coach, 'firstName').toUpperCase()}</span>
+        <span className="text-[11px] font-extrabold tracking-[0.2em] text-rose-400 bg-rose-500/10 border border-rose-500/25 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {t('trainWith')} {pick(coach, 'firstName').toUpperCase()}</span>
         <h1 className="font-display text-4xl md:text-5xl mt-3 uppercase">{isAR ? <>برامج <span className="text-fire">التدريب</span></> : <>Training <span className="text-fire">Programs</span></>}</h1>
         <p className="text-stone-400 mt-2">{isAR ? `مبتدئ / متوسط / متقدم — بتتفصل عليك لما تتمرن مع ${pick(coach, 'firstName')}` : `Beginner / Intermediate / Advanced — personalized when you coach with ${pick(coach, 'firstName')}`}</p>
         <div className="flex gap-2 mt-5 bg-stone-900 border border-white/10 rounded-2xl p-2 w-fit">
@@ -30,8 +31,9 @@ export default function Workouts() {
           {programs.filter(matchLevel).length === 0 && <p className="text-stone-400">{isAR ? 'لا توجد برامج بعد.' : 'No programs yet.'}</p>}
         </div>
         <div className="mt-8 rounded-2xl p-[2px] bg-fire-gradient">
-          <div className="bg-stone-950 rounded-2xl p-5 text-sm text-stone-300">
-            🔥 {isAR ? <>عايز برنامج متفصل <b className="text-white">لجسمك</b> وهدفك وأدواتك؟ <a className="font-extrabold text-rose-400 underline" href="/booking">احجز مع {pick(coach, 'firstName')} على واتساب ←</a></> : <>Want a program built for <b className="text-white">your</b> body, goal and equipment? <a className="font-extrabold text-rose-400 underline" href="/booking">Book with {pick(coach, 'firstName')} on WhatsApp →</a></>}
+          <div className="bg-stone-950 rounded-2xl p-5 text-sm text-stone-300 flex items-start gap-2">
+            <Flame size={16} className="text-rose-400 shrink-0 mt-0.5" />
+            <span>{isAR ? <>عايز برنامج متفصل <b className="text-white">لجسمك</b> وهدفك وأدواتك؟ <a className="font-extrabold text-rose-400 underline inline-flex items-center gap-1" href="/booking">احجز مع {pick(coach, 'firstName')} على واتساب <ArrowRight size={14} className="rotate-180" /></a></> : <>Want a program built for <b className="text-white">your</b> body, goal and equipment? <a className="font-extrabold text-rose-400 underline inline-flex items-center gap-1" href="/booking">Book with {pick(coach, 'firstName')} on WhatsApp <ArrowRight size={14} /></a></>}</span>
           </div>
         </div>
       </div>

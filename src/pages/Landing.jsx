@@ -1,13 +1,16 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Flame, Calculator, Check, Star, ArrowRight, Dumbbell, Laptop, Salad, Video } from 'lucide-react'
 import { useSiteStore } from '../store/useSiteStore'
 import { useT, useL } from '../i18n/useT'
 import { WorkoutCard } from '../components/cards'
 import { SectionTitle, Badge } from '../components/ui'
 import { WhatsAppButton } from '../components/WhatsApp'
-import { MarqueeStrip, EmberBackground, StatBurst } from '../components/brand'
+import { MarqueeStrip, EmberBackground, StatBurst, CoachLogo } from '../components/brand'
 import { waLink } from '../utils/whatsapp'
 import heroImg from '../assets/images/hero.jpg'
+
+const SERVICE_ICONS = { dumbbell: Dumbbell, laptop: Laptop, salad: Salad, video: Video, flame: Flame, '🏋️': Dumbbell, '💻': Laptop, '🥗': Salad, '🎥': Video, '🔥': Flame }
 
 const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' } }
 
@@ -22,7 +25,7 @@ export default function Landing() {
   const { pick, pickArr } = useL()
   const popular = programs.filter((w) => w.popular).slice(0, 3)
   const popularFallback = (popular.length ? popular : programs).slice(0, 3)
-  const waStart = isAR ? 'أهلاً محمد! عايز أبدأ التدريب معاك 🔥💪 هدفي هو:' : 'Hi Mohammad! I want to start coaching with you 🔥💪 My goal is:'
+  const waStart = isAR ? 'أهلاً محمد! عايز أبدأ التدريب معاك. هدفي هو:' : 'Hi Mohammad! I want to start coaching with you. My goal is:'
   return (
     <div className="bg-stone-950 text-stone-100 overflow-x-hidden">
       {/* HERO */}
@@ -32,8 +35,8 @@ export default function Landing() {
         <EmberBackground />
         <div className="relative container-x py-14 md:py-24 grid md:grid-cols-2 gap-10 items-center">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <motion.span animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity }} className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.22em] text-amber-300 bg-rose-500/10 border border-rose-500/30 px-4 py-2 rounded-full">
-              {t('heroBadge')}
+            <motion.span animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity }} className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.22em] text-stone-200 bg-rose-500/10 border border-rose-500/30 px-4 py-2 rounded-full">
+              <Flame size={13} /> {t('heroBadge')}
             </motion.span>
             <h1 className="font-display text-5xl md:text-7xl mt-5 uppercase leading-[1.05]">
               {pick(coach, 'name')}
@@ -42,16 +45,16 @@ export default function Landing() {
             <p className="text-stone-300 mt-5 max-w-md leading-relaxed">{pick(coach, 'bio')}</p>
             <div className="flex flex-wrap gap-3 mt-7">
               <WhatsAppButton large text={waStart} label={t('startWhatsapp')} />
-              <Link to="/results" className="px-8 py-4 rounded-xl font-extrabold bg-white/10 border border-white/20 hover:bg-white/20 hover:border-rose-500/50 backdrop-blur transition">{t('seeWork')}</Link>
+              <Link to="/results" className="px-8 py-4 rounded-xl font-extrabold bg-white/10 border border-white/20 hover:bg-white/20 hover:border-rose-500/50 backdrop-blur transition inline-flex items-center gap-2">{t('seeWork')} <ArrowRight size={18} className="rtl:rotate-180" /></Link>
             </div>
             <div className="mt-8"><StatBurst stats={coach.stats} /></div>
           </motion.div>
           <motion.div initial={{ opacity: 0, scale: 0.94, rotate: 1 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.7 }} className="relative hidden md:block">
-            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }} className="relative rounded-[2rem] p-2 bg-gradient-to-br from-amber-400 via-rose-600 to-red-700 shadow-fire-lg">
+            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }} className="relative rounded-[2rem] p-2 bg-gradient-to-br from-[#FF7A88] via-[#C8102E] to-[#42060D] shadow-fire-lg">
               <img src={heroImg || coach.avatar} className="rounded-[1.6rem] h-[480px] w-full object-cover" alt={pick(coach, 'name')} />
               <div className="absolute bottom-6 left-6 right-6 bg-stone-950/80 backdrop-blur-xl border border-rose-500/25 rounded-2xl p-4 flex justify-between items-center">
-                <div><div className="font-display text-lg uppercase">🔥 {pick(coach, 'name')}</div><div className="text-xs text-stone-400">{pick(coach, 'title')}</div></div>
-                <a href={waLink('Hi Mohammad! 🔥')} target="_blank" rel="noreferrer" className="text-xs font-extrabold text-green-400 animate-flicker">● {isAR ? 'متاح الآن' : 'Available now'}</a>
+                <div><div className="font-display text-lg uppercase flex items-center gap-2"><CoachLogo size={26} /> {pick(coach, 'name')}</div><div className="text-xs text-stone-400">{pick(coach, 'title')}</div></div>
+                <a href={waLink('Hi Mohammad!')} target="_blank" rel="noreferrer" className="text-xs font-extrabold text-green-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400 animate-flicker" /> {isAR ? 'متاح الآن' : 'Available now'}</a>
               </div>
             </motion.div>
           </motion.div>
@@ -67,14 +70,17 @@ export default function Landing() {
           subtitle={isAR ? 'تدريب جيم + أونلاين مصمم لحياتك الحقيقية وأكلك ووقتك.' : 'Gym + online coaching built for real life, real food, real schedules.'}
         />
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {services.map((s, i) => (
+          {services.map((s, i) => {
+            const Icon = SERVICE_ICONS[s.icon] || Flame
+            return (
             <motion.div key={pick(s, 'title') + i} {...fadeUp} transition={{ delay: i * 0.07 }} whileHover={{ y: -6, rotate: -0.5 }} className="card-fire p-6 relative overflow-hidden group">
               <div className="absolute top-0 left-0 right-0 h-1 bg-fire-gradient opacity-0 group-hover:opacity-100 transition" />
-              <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.3 }} className="text-4xl">{s.icon}</motion.div>
+              <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.3 }} className="text-rose-400"><Icon size={36} /></motion.div>
               <h3 className="font-display text-xl mt-3 uppercase">{pick(s, 'title')}</h3>
               <p className="text-sm text-stone-400 mt-1">{pick(s, 'desc')}</p>
             </motion.div>
-          ))}
+            )
+          })}
         </div>
       </section>
 
@@ -99,7 +105,7 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
-          <div className="text-center mt-7"><Link to="/results" className="btn-fire inline-block px-6 py-3 rounded-xl font-extrabold text-white">{t('viewAllResults')}</Link></div>
+          <div className="text-center mt-7"><Link to="/results" className="btn-fire inline-flex items-center gap-2 px-6 py-3 rounded-xl font-extrabold text-white">{t('viewAllResults')} <ArrowRight size={18} className="rtl:rotate-180" /></Link></div>
         </div>
       </section>
 
@@ -118,7 +124,7 @@ export default function Landing() {
               <h3 className="font-display text-2xl uppercase">{isAR ? <>مش عارف تاكل <span className="text-fire">قد إيه؟</span></> : <>Not sure how much <span className="text-fire">to eat?</span></>}</h3>
               <p className="text-sm text-stone-400">{isAR ? 'احسب سعراتك (BMR) في دقيقة وابعتها لمحمد على واتساب.' : 'Calculate your BMR calories in a minute and send them to Mohammad.'}</p>
             </div>
-            <Link to="/calculator" className="btn-fire px-6 py-3 rounded-xl font-extrabold text-white whitespace-nowrap">🧮 {isAR ? 'حاسبة السعرات' : 'BMR Calculator'}</Link>
+            <Link to="/calculator" className="btn-fire inline-flex items-center gap-2 px-6 py-3 rounded-xl font-extrabold text-white whitespace-nowrap"><Calculator size={20} /> {isAR ? 'حاسبة السعرات' : 'BMR Calculator'}</Link>
           </div>
         </motion.div>
       </section>
@@ -133,15 +139,15 @@ export default function Landing() {
           {packages.map((p, i) => (
             <motion.div key={p.id} {...fadeUp} transition={{ delay: i * 0.08 }} whileHover={{ y: -8 }} className={`rounded-3xl p-6 border relative overflow-hidden ${p.highlight ? 'bg-gradient-to-b from-rose-600/25 to-stone-900 border-rose-500/60 shadow-fire-lg' : 'card-fire'}`}>
               {p.highlight && <div className="absolute top-0 left-0 right-0 h-1.5 bg-fire-gradient" />}
-              <span className="text-[11px] font-extrabold tracking-wider bg-fire-gradient text-white px-3 py-1 rounded-full">🔥 {pick(p, 'tag')}</span>
+              <span className="text-[11px] font-extrabold tracking-wider bg-fire-gradient text-white px-3 py-1 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {pick(p, 'tag')}</span>
               <h3 className="font-display text-2xl mt-3 uppercase">{pick(p, 'name')}</h3>
               <div className="my-3"><span className="font-display text-4xl text-fire">{p.price}</span><span className="text-stone-400 text-sm">{pick(p, 'period')}</span></div>
-              <ul className="space-y-2 text-sm mb-6 text-stone-300">{pickArr(p, 'features').map((f) => <li key={f}>🔥 {f}</li>)}</ul>
+              <ul className="space-y-2 text-sm mb-6 text-stone-300">{pickArr(p, 'features').map((f) => <li key={f} className="flex items-start gap-2"><Check size={16} className="text-rose-400 shrink-0 mt-0.5" /> {f}</li>)}</ul>
               <WhatsAppButton text={pick(p, 'whatsappText')} label={isAR ? `احجز ${pick(p, 'name')}` : `Book ${pick(p, 'name')}`} className="w-full" />
             </motion.div>
           ))}
         </div>
-        <div className="text-center mt-6"><Link to="/booking" className="font-bold text-rose-400 hover:text-rose-300">{t('bookPackage')}</Link></div>
+        <div className="text-center mt-6"><Link to="/booking" className="font-bold text-rose-400 hover:text-rose-300 inline-flex items-center gap-1.5">{t('bookPackage')} <ArrowRight size={16} className="rtl:rotate-180" /></Link></div>
       </section>
 
       {/* TESTIMONIALS */}
@@ -155,7 +161,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-5">
             {testimonials.map((titem, i) => (
               <motion.div key={titem.id} {...fadeUp} transition={{ delay: i * 0.08 }} className="card-fire p-6">
-                <div className="text-rose-400 tracking-widest">★★★★★</div>
+                <div className="flex items-center gap-0.5 text-amber-400">{[0, 1, 2, 3, 4].map((s) => <Star key={s} size={14} fill="currentColor" />)}</div>
                 <p className="text-stone-200 mt-2">“{pick(titem, 'text')}”</p>
                 <div className="flex items-center gap-3 mt-4">
                   <img src={titem.avatar} className="w-10 h-10 rounded-full border-2 border-rose-500/50" alt={pick(titem, 'name')} />
@@ -165,7 +171,7 @@ export default function Landing() {
             ))}
           </div>
           <div className="text-center mt-9">
-            <WhatsAppButton large text={isAR ? 'أهلاً محمد! قريت التقييمات وعايز أبدأ 🔥💪' : 'Hi Mohammad! I read the reviews and want to start 🔥💪'} label={isAR ? 'كن النتيجة الجاية 🔥' : 'Become the Next Result 🔥'} />
+            <WhatsAppButton large text={isAR ? 'أهلاً محمد! قريت التقييمات وعايز أبدأ' : 'Hi Mohammad! I read the reviews and want to start'} label={isAR ? 'كن النتيجة الجاية' : 'Become the Next Result'} />
           </div>
         </div>
       </section>

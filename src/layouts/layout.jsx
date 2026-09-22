@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Flame, Sun, Moon, MessageCircle, Dumbbell, Package, Trophy, CalendarDays, Calculator, Menu, X, ChevronDown, Globe } from 'lucide-react'
+import { CoachLogo } from '../components/brand'
 import { waLink } from '../utils/whatsapp'
 import { useSiteStore } from '../store/useSiteStore'
 import { usePrefsStore } from '../store/usePrefsStore'
 import { useT, useL } from '../i18n/useT'
 import { WhatsAppFloat } from '../components/WhatsApp'
 
-function Toggles({ compact }) {
+function Toggles() {
   const theme = usePrefsStore((s) => s.theme)
   const toggleTheme = usePrefsStore((s) => s.toggleTheme)
   const toggleLang = usePrefsStore((s) => s.toggleLang)
@@ -17,30 +19,30 @@ function Toggles({ compact }) {
       <button
         onClick={toggleTheme}
         title={theme === 'dark' ? 'Switch to light (eye-comfort)' : 'Switch to dark'}
-        className="text-xs font-bold px-2.5 py-2 rounded-xl bg-white/10 border border-white/15 hover:bg-white/20 transition"
+        className="p-2 rounded-xl bg-white/10 border border-white/15 hover:bg-white/20 transition"
       >
-        {theme === 'dark' ? (compact ? '☀️' : `☀️ ${t('light')}`) : (compact ? '🌙' : `🌙 ${t('dark')}`)}
+        {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
       </button>
       <button
         onClick={toggleLang}
         title="AR / EN"
-        className="text-xs font-extrabold px-2.5 py-2 rounded-xl bg-fire-gradient text-white shadow-fire transition hover:brightness-110"
+        className="lang-toggle text-xs font-extrabold px-2.5 py-2 rounded-xl bg-fire-gradient text-white shadow-fire transition hover:brightness-110 inline-flex items-center gap-1.5"
       >
-        {t('langName')}
+        <Globe size={15} /> {t('langName')}
       </button>
     </div>
   )
 }
 
 const COACHING_LINKS = [
-  { to: '/workouts', key: 'programs', icon: '🏋️' },
-  { to: '/packages', key: 'packages', icon: '📦' },
-  { to: '/results', key: 'results', icon: '🏆' },
-  { to: '/booking', key: 'booking', icon: '📅' },
-  { to: '/calculator', key: 'calculator', icon: '🧮' },
+  { to: '/workouts', key: 'programs', Icon: Dumbbell },
+  { to: '/packages', key: 'packages', Icon: Package },
+  { to: '/results', key: 'results', Icon: Trophy },
+  { to: '/booking', key: 'booking', Icon: CalendarDays },
+  { to: '/calculator', key: 'calculator', Icon: Calculator },
 ]
 
-function CoachingDropdown({ mobile }) {
+function CoachingDropdown() {
   const { t } = useT()
   const location = useLocation()
   const [open, setOpen] = useState(false)
@@ -56,34 +58,6 @@ function CoachingDropdown({ mobile }) {
     document.addEventListener('keydown', onKey)
     return () => { document.removeEventListener('mousedown', onClick); document.removeEventListener('keydown', onKey) }
   }, [open ])
-
-  if (mobile) {
-    return (
-      <div className="shrink-0">
-        <button onClick={() => setOpen((o) => !o)} className={`text-sm font-bold tracking-wide transition ${active ? 'text-rose-400' : 'text-stone-300'}`}>
-          {t('nav.coaching')} {open ? '▴' : '▾'}
-        </button>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="overflow-hidden"
-            >
-              <div className="flex gap-4 pt-2 pb-1">
-                {COACHING_LINKS.map((l) => (
-                  <NavLink key={l.to} to={l.to} className={({ isActive }) => `text-sm whitespace-nowrap ${isActive ? 'text-rose-400 font-bold' : 'text-stone-300'}`}>
-                    {l.icon} {t(`nav.${l.key}`)}
-                  </NavLink>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    )
-  }
 
   return (
     <div ref={ref} className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
@@ -113,7 +87,7 @@ function CoachingDropdown({ mobile }) {
                 onClick={() => setOpen(false)}
                 className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition ${isActive ? 'bg-rose-500/15 text-rose-300' : 'text-stone-300 hover:bg-rose-500/10 hover:text-white'}`}
               >
-                <span className="text-lg">{l.icon}</span>
+                <l.Icon size={18} />
                 {t(`nav.${l.key}`)}
               </NavLink>
             ))}
@@ -121,6 +95,101 @@ function CoachingDropdown({ mobile }) {
         )}
       </AnimatePresence>
     </div>
+  )
+}
+
+function MobileMenu() {
+  const { t } = useT()
+  const location = useLocation()
+  const [open, setOpen] = useState(false)
+  const [coachOpen, setCoachOpen] = useState(false)
+
+  useEffect(() => { setOpen(false) }, [location.pathname])
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false) }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [open ])
+
+  const mlink = ({ isActive }) => `flex items-center gap-3 px-4 py-3.5 rounded-2xl text-[15px] font-bold transition min-h-[52px] ${isActive ? 'bg-rose-500/15 text-rose-300' : 'text-stone-200 active:bg-white/5'}`
+  const coachingActive = COACHING_LINKS.some((l) => location.pathname.startsWith(l.to))
+
+  return (
+    <div className="md:hidden">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        aria-expanded={open}
+        className="p-2.5 -me-1 rounded-xl text-stone-200 hover:bg-white/10 active:scale-95 transition min-w-[44px] min-h-[44px] flex items-center justify-center"
+      >
+        {open ? <X size={24} /> : <Menu size={24} />}
+      </button>
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="menu-panel absolute top-full inset-x-0 z-50"
+          >
+            <div className="container-x py-3 max-h-[calc(100dvh-4rem)] overflow-y-auto">
+              <NavLink to="/" className={mlink}>{t('nav.home')}</NavLink>
+              <NavLink to="/about" className={mlink}>{t('nav.about')}</NavLink>
+
+              <button
+                onClick={() => setCoachOpen((o) => !o)}
+                aria-expanded={coachOpen}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-[15px] font-bold transition min-h-[52px] ${coachingActive ? 'text-rose-300' : 'text-stone-200'}`}
+              >
+                {t('nav.coaching')}
+                <motion.span animate={{ rotate: coachOpen ? 180 : 0 }} className="ms-auto"><ChevronDown size={18} /></motion.span>
+              </button>
+              <AnimatePresence initial={false}>
+                {coachOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="ps-4 pb-1 space-y-0.5">
+                      {COACHING_LINKS.map((l) => (
+                        <NavLink key={l.to} to={l.to} className={mlink}>
+                          <l.Icon size={19} className="text-rose-400" /> {t(`nav.${l.key}`)}
+                        </NavLink>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <NavLink to="/contact" className={mlink}>{t('nav.contact')}</NavLink>
+
+              <div className="grid grid-cols-2 gap-2.5 px-1 pt-3 pb-1">
+                <WhatsAppCta />
+                <Link to="/booking" className="btn-fire rounded-xl font-extrabold text-white text-center text-sm px-4 py-3.5 min-h-[52px] flex items-center justify-center">{t('bookNow')}</Link>
+              </div>
+              <div className="flex items-center justify-between px-4 py-3">
+                <span className="text-xs font-bold text-stone-400">{t('themeLang')}</span>
+                <Toggles />
+              </div>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
+function WhatsAppCta() {
+  const { t } = useT()
+  return (
+    <a href={waLink('Hi Mohammad! I want to book coaching')} target="_blank" rel="noreferrer" className="btn-wa rounded-xl font-extrabold text-sm px-4 py-3.5 min-h-[52px] flex items-center justify-center gap-1.5">
+      <MessageCircle size={17} /> {t('whatsapp')}
+    </a>
   )
 }
 
@@ -133,8 +202,8 @@ export function Navbar() {
     <header className="sticky top-0 z-40 bg-stone-950/85 backdrop-blur-xl border-b border-rose-500/15">
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-fire-gradient" />
       <div className="container-x flex items-center justify-between h-16 gap-2">
-        <Link to="/" className="flex items-center gap-2 font-display text-xl uppercase tracking-wide shrink-0">
-          <motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 1.6, repeat: Infinity }} className="text-2xl">🔥</motion.span>
+        <Link to="/" className="flex items-center gap-2.5 font-display text-xl uppercase tracking-wide shrink-0">
+          <motion.span animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 2.4, repeat: Infinity }} className="flex"><CoachLogo size={38} /></motion.span>
           <span className="text-white">{pick(coach, 'name')}</span>
           {/* <span className="hidden sm:inline text-[10px] font-sans font-extrabold bg-fire-gradient text-white px-2 py-1 rounded-full">GYM • ONLINE</span> */}
         </Link>
@@ -144,17 +213,11 @@ export function Navbar() {
           <CoachingDropdown />
           <NavLink to="/contact" className={link}>{t('nav.contact')}</NavLink>
         </nav>
-        <div className="flex items-center gap-2">
-          <Toggles compact />
-          {/* <motion.a whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} href={waLink('Hi Mohammad! I want to book coaching 🔥💪')} target="_blank" rel="noreferrer" className="btn-fire text-sm px-4 py-2 rounded-xl font-extrabold text-white hidden sm:block">💬 {t('whatsapp')}</motion.a> */}
+        <div className="hidden md:flex items-center gap-2">
+          <Toggles />
           <Link to="/booking" className="hidden lg:block text-sm bg-white text-stone-950 px-4 py-2 rounded-xl font-extrabold hover:bg-rose-100">{t('bookNow')}</Link>
         </div>
-      </div>
-      <div className="md:hidden flex gap-4 overflow-x-auto px-4 pb-2 text-sm items-start">
-        <NavLink to="/" className={link}>{t('nav.home')}</NavLink>
-        <NavLink to="/about" className={link}>{t('nav.about')}</NavLink>
-        <CoachingDropdown mobile />
-        <NavLink to="/contact" className={link}>{t('nav.contact')}</NavLink>
+        <MobileMenu />
       </div>
     </header>
   )
@@ -169,15 +232,15 @@ export function Footer() {
       <div className="absolute top-0 left-0 right-0 h-1 bg-fire-gradient" />
       <div className="container-x py-12 grid md:grid-cols-4 gap-8 relative">
         <div>
-          <div className="font-display text-white text-xl mb-2 uppercase">🔥 {pick(coach, 'name')}</div>
+          <div className="flex items-center gap-3 mb-2"><CoachLogo size={46} /><span className="font-display text-white text-xl uppercase">{pick(coach, 'name')}</span></div>
           <p className="text-sm">{pick(coach, 'title')}<br />{pick(coach, 'location')}</p>
-          <a href={waLink('Hi Mohammad! 🔥')} target="_blank" rel="noreferrer" className="btn-fire inline-block mt-4 text-sm px-4 py-2 rounded-xl font-extrabold text-white">💬 {t('whatsapp')}</a>
+          <a href={waLink('Hi Mohammad!')} target="_blank" rel="noreferrer" className="btn-wa inline-flex items-center gap-1.5 mt-4 text-sm px-4 py-2 rounded-xl font-extrabold"><MessageCircle size={16} /> {t('whatsapp')}</a>
         </div>
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">Portfolio</h4><ul className="text-sm space-y-1"><li><Link className="hover:text-rose-400" to="/about">{t('nav.about')}</Link></li><li><Link className="hover:text-rose-400" to="/results">{t('nav.results')}</Link></li><li><Link className="hover:text-rose-400" to="/workouts">{t('nav.programs')}</Link></li></ul></div>
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">Coaching</h4><ul className="text-sm space-y-1"><li><Link className="hover:text-rose-400" to="/packages">{t('nav.packages')}</Link></li><li><Link className="hover:text-rose-400" to="/booking">{t('bookNow')}</Link></li><li><Link className="hover:text-rose-400" to="/calculator">{t('nav.calculator')}</Link></li><li><Link className="hover:text-rose-400" to="/contact">{t('nav.contact')}</Link></li></ul></div>
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">No Excuses</h4><p className="font-display text-2xl text-fire uppercase leading-snug">{t('footerTagline')}</p></div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs">© 2026 {pick(coach, 'name')} — Built with 🔥. All rights reserved.</div>
+      <div className="border-t border-white/10 py-4 text-center text-xs flex items-center justify-center gap-1.5">© 2026 {pick(coach, 'name')} — Built with <Flame size={13} className="text-rose-500" />. All rights reserved.</div>
     </footer>
   )
 }
@@ -199,8 +262,8 @@ export function DashboardLayout({ children, tabs }) {
     <div className="container-x py-8 grid lg:grid-cols-[220px_1fr] gap-6">
       <aside className="card-fire p-4 h-fit space-y-1">
         {tabs.map((t) => (
-          <button key={t.key || t.to} onClick={t.onClick} className="w-full text-start block px-3 py-2 rounded-xl text-sm font-bold text-stone-300 hover:bg-rose-500/10 hover:text-rose-300">
-            {t.icon} {t.label}
+          <button key={t.key || t.to} onClick={t.onClick} className="w-full text-start px-3 py-2 rounded-xl text-sm font-bold text-stone-300 hover:bg-rose-500/10 hover:text-rose-300 flex items-center gap-2">
+            {t.Icon && <t.Icon size={15} />} {t.label}
           </button>
         ))}
       </aside>

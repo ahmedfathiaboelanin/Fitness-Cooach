@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { FileText, Package, Trophy, MessageCircle, Zap, Dumbbell, Save, Lock, Download, Copy, RotateCcw, Upload, Plus, Star, Laptop, Salad, Video, Flame, ArrowRight } from 'lucide-react'
 import { useAdminStore } from '../store/useAdminStore'
 import { useSiteStore } from '../store/useSiteStore'
 import { Card, Button } from '../components/ui'
@@ -33,11 +34,11 @@ function ContentTab() {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
   const save = () => {
     updateCoach(form)
-    alert('Saved ✅ — written to src/data/site.json (when running npm run dev)')
+    alert('Saved! Written to src/data/site.json (when running npm run dev)')
   }
   return (
     <Card className="space-y-3">
-      <h3 className="font-display text-xl uppercase">Site content 🔥 (EN + AR)</h3>
+      <h3 className="font-display text-xl uppercase flex items-center gap-2"><FileText size={20} className="text-rose-400" /> Site content (EN + AR)</h3>
       <div className="grid sm:grid-cols-2 gap-3">
         <Field label="Name (EN)" value={form.name} onChange={(e) => set('name', e.target.value)} />
         <Field label="Name (AR)" value={form.name_ar || ''} onChange={(e) => set('name_ar', e.target.value)} />
@@ -86,7 +87,7 @@ function PackagesTab() {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-display text-xl uppercase mb-3">{editing ? 'Edit package' : 'Add package'} 📦 (EN + AR)</h3>
+        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><Package size={20} className="text-rose-400" /> {editing ? 'Edit package' : 'Add package'} (EN + AR)</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           <Field label="Name EN" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Online Coaching" />
           <Field label="Name AR" value={form.name_ar} onChange={(e) => setForm({ ...form, name_ar: e.target.value })} placeholder="التدريب الأونلاين" />
@@ -106,7 +107,7 @@ function PackagesTab() {
         </div>
         <label className="flex items-center gap-2 text-sm mt-3"><input type="checkbox" checked={!!form.highlight} onChange={(e) => setForm({ ...form, highlight: e.target.checked })} /> Highlighted</label>
         <div className="flex gap-2 mt-3">
-          <Button onClick={save}>{editing ? 'Save ✅' : '+ Add 📦'}</Button>
+          <Button onClick={save}><span className="inline-flex items-center gap-1.5">{editing ? <><Save size={16} /> Save</> : <><Plus size={16} /> Add package</>}</span></Button>
           {editing && <Button variant="secondary" onClick={() => { setEditing(null); setForm({ name: '', name_ar: '', price: '', period: '', period_ar: '', tag: '', tag_ar: '', whatsappText: '', whatsappText_ar: '', highlight: false, features: '', features_ar: '' }) }}>Cancel</Button>}
         </div>
       </Card>
@@ -139,7 +140,7 @@ function ResultsTab() {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-display text-xl uppercase mb-3">{editing ? 'Edit result' : 'Add result'} 🏆 (EN + AR)</h3>
+        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><Trophy size={20} className="text-rose-400" /> {editing ? 'Edit result' : 'Add result'} (EN + AR)</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           <Field label="Client name EN" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Ahmed — Fat Loss" />
           <Field label="Client name AR" value={form.name_ar} onChange={(e) => setForm({ ...form, name_ar: e.target.value })} placeholder="أحمد — تخسيس" />
@@ -154,7 +155,7 @@ function ResultsTab() {
           <Area label="Story AR" value={form.text_ar} onChange={(e) => setForm({ ...form, text_ar: e.target.value })} rows={2} />
         </div>
         <div className="flex gap-2 mt-3">
-          <Button onClick={save}>{editing ? 'Save ✅' : '+ Add 🏆'}</Button>
+          <Button onClick={save}><span className="inline-flex items-center gap-1.5">{editing ? <><Save size={16} /> Save</> : <><Plus size={16} /> Add result</>}</span></Button>
           {editing && <Button variant="secondary" onClick={() => { setEditing(null); setForm({ name: '', name_ar: '', result: '', result_ar: '', goal: '', goal_ar: '', image: '', text: '', text_ar: '' }) }}>Cancel</Button>}
         </div>
       </Card>
@@ -184,14 +185,14 @@ function TestimonialsTab() {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-display text-xl uppercase mb-3">Add review 💬</h3>
+        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><MessageCircle size={20} className="text-rose-400" /> Add review</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           <Field label="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <Field label="Role" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} />
         </div>
         <div className="mt-3"><Field label="Avatar URL" value={form.avatar} onChange={(e) => setForm({ ...form, avatar: e.target.value })} /></div>
         <div className="mt-3"><Area label="Text" value={form.text} onChange={(e) => setForm({ ...form, text: e.target.value })} /></div>
-        <Button className="mt-3" onClick={() => { if (!form.name || !form.text) return alert('Name + text required'); addTestimonial(form); setForm({ name: '', role: '', avatar: '', text: '' }) }}>+ Add review</Button>
+        <Button className="mt-3" onClick={() => { if (!form.name || !form.text) return alert('Name + text required'); addTestimonial(form); setForm({ name: '', role: '', avatar: '', text: '' }) }}><span className="inline-flex items-center gap-1.5"><Plus size={16} /> Add review</span></Button>
       </Card>
       {list.map((t) => (
         <Card key={t.id} className="flex justify-between gap-3"><div className="text-sm"><b className="text-white">{t.name}</b> <span className="text-stone-400">— {t.role}</span><p className="text-stone-300 mt-1">“{t.text}”</p></div><button onClick={() => confirm('Delete?') && deleteTestimonial(t.id)} className="text-xs text-red-400 shrink-0">Delete</button></Card>
@@ -200,24 +201,35 @@ function TestimonialsTab() {
   )
 }
 
+const SERVICE_ICON_OPTIONS = [
+  { value: 'dumbbell', label: 'Gym', Icon: Dumbbell },
+  { value: 'laptop', label: 'Online', Icon: Laptop },
+  { value: 'salad', label: 'Nutrition', Icon: Salad },
+  { value: 'video', label: 'Video review', Icon: Video },
+  { value: 'flame', label: 'General', Icon: Flame },
+]
+
 function ServicesTab() {
   const list = useSiteStore((s) => s.services)
   const { addService, deleteService } = useSiteStore()
-  const [form, setForm] = useState({ title: '', desc: '', icon: '🔥' })
+  const [form, setForm] = useState({ title: '', desc: '', icon: 'dumbbell' })
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-display text-xl uppercase mb-3">Add service ⚡</h3>
+        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><Zap size={20} className="text-rose-400" /> Add service</h3>
         <div className="grid sm:grid-cols-3 gap-3">
-          <Field label="Icon" value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} />
+          <div><label className={labelCls}>Icon</label><select value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })} className={`${inputCls} mt-1`}>{SERVICE_ICON_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</select></div>
           <Field label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           <Field label="Desc" value={form.desc} onChange={(e) => setForm({ ...form, desc: e.target.value })} />
         </div>
-        <Button className="mt-3" onClick={() => { if (!form.title) return alert('Title required'); addService(form); setForm({ title: '', desc: '', icon: '🔥' }) }}>+ Add</Button>
+        <Button className="mt-3" onClick={() => { if (!form.title) return alert('Title required'); addService(form); setForm({ title: '', desc: '', icon: 'dumbbell' }) }}><span className="inline-flex items-center gap-1.5"><Plus size={16} /> Add</span></Button>
       </Card>
-      {list.map((sv, i) => (
-        <Card key={i} className="flex justify-between"><span className="text-sm">{sv.icon} <b className="text-white">{sv.title}</b> <span className="text-stone-400">— {sv.desc}</span></span><button onClick={() => confirm('Delete?') && deleteService(i)} className="text-xs text-red-400">Delete</button></Card>
-      ))}
+      {list.map((sv, i) => {
+        const Icon = (SERVICE_ICON_OPTIONS.find((o) => o.value === sv.icon) || { Icon: Flame }).Icon
+        return (
+        <Card key={i} className="flex justify-between items-center"><span className="text-sm flex items-center gap-2"><Icon size={16} className="text-rose-400 shrink-0" /> <b className="text-white">{sv.title}</b> <span className="text-stone-400">— {sv.desc}</span></span><button onClick={() => confirm('Delete?') && deleteService(i)} className="text-xs text-red-400 shrink-0">Delete</button></Card>
+        )
+      })}
     </div>
   )
 }
@@ -229,7 +241,7 @@ function ProgramsTab() {
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-display text-xl uppercase mb-3">Add program 🏋️</h3>
+        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><Dumbbell size={20} className="text-rose-400" /> Add program</h3>
         <div className="grid sm:grid-cols-2 gap-3">
           <Field label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           <div><label className={labelCls}>Level</label><select value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} className={`${inputCls} mt-1`}><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
@@ -240,13 +252,13 @@ function ProgramsTab() {
         </div>
         <div className="mt-3"><Area label="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} /></div>
         <label className="flex items-center gap-2 text-sm mt-2"><input type="checkbox" checked={!!form.popular} onChange={(e) => setForm({ ...form, popular: e.target.checked })} /> Show on homepage</label>
-        <Button className="mt-3" onClick={() => { if (!form.title) return alert('Title required'); addProgram(form); setForm({ title: '', level: 'Beginner', goal: 'fat loss', durationWeeks: 4, daysPerWeek: 3, durationMin: 30, image: '', description: '', popular: false }) }}>+ Add program</Button>
+        <Button className="mt-3" onClick={() => { if (!form.title) return alert('Title required'); addProgram(form); setForm({ title: '', level: 'Beginner', goal: 'fat loss', durationWeeks: 4, daysPerWeek: 3, durationMin: 30, image: '', description: '', popular: false }) }}><span className="inline-flex items-center gap-1.5"><Plus size={16} /> Add program</span></Button>
       </Card>
       {list.map((p) => (
         <Card key={p.id} className="flex justify-between items-center gap-3">
           <div className="text-sm"><b className="text-white">{p.title}</b> <span className="text-stone-400">• {p.level} • {p.goal}</span></div>
           <div className="flex gap-2 shrink-0">
-            <button onClick={() => updateProgram(p.id, { popular: !p.popular })} className="text-xs bg-white/10 px-3 py-1.5 rounded-lg">{p.popular ? '★ Homepage' : '☆ Homepage'}</button>
+            <button onClick={() => updateProgram(p.id, { popular: !p.popular })} className="text-xs bg-white/10 px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5"><Star size={12} fill={p.popular ? 'currentColor' : 'none'} className="text-amber-400" /> Homepage</button>
             <button onClick={() => confirm('Delete?') && deleteProgram(p.id)} className="text-xs text-red-400 px-2 py-1.5">Delete</button>
           </div>
         </Card>
@@ -262,18 +274,18 @@ function FileStatus() {
   if (fileBackend === 'connected') {
     return (
       <div className="flex flex-wrap items-center gap-2 text-xs bg-green-500/10 border border-green-500/30 rounded-xl px-3 py-2">
-        <span className="text-green-400 font-bold">● Auto-save to site.json ON</span>
+        <span className="text-green-400 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400" /> Auto-save to site.json ON</span>
         <span className="text-stone-400">every edit writes to src/data/site.json{lastFileSave ? ` • last saved ${lastFileSave}` : ''}</span>
-        <button onClick={() => saveToFile()} className="ms-auto bg-green-600/20 border border-green-500/40 px-2.5 py-1 rounded-lg font-bold hover:bg-green-600/30">Save now 💾</button>
+        <button onClick={() => saveToFile()} className="ms-auto bg-green-600/20 border border-green-500/40 px-2.5 py-1 rounded-lg font-bold hover:bg-green-600/30 inline-flex items-center gap-1.5"><Save size={13} /> Save now</button>
       </div>
     )
   }
   if (fileBackend === 'checking') {
-    return <div className="text-xs text-stone-400 bg-white/5 border border-white/10 rounded-xl px-3 py-2">◌ Checking file connection…</div>
+    return <div className="text-xs text-stone-400 bg-white/5 border border-white/10 rounded-xl px-3 py-2">Checking file connection…</div>
   }
   return (
     <div className="text-xs bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2">
-      <span className="text-amber-300 font-bold">● Dev file API unavailable</span>
+      <span className="text-amber-300 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-300" /> Dev file API unavailable</span>
       <span className="text-stone-400"> — are you running <code className="bg-stone-800 px-1 rounded">npm run dev</code>? Edits are kept in this browser only; use Export below as backup.</span>
     </div>
   )
@@ -295,18 +307,18 @@ function SettingsTab() {
     <div className="space-y-4">
       <FileStatus />
       <Card>
-        <h3 className="font-display text-xl uppercase">Save to JSON file 💾</h3>
+        <h3 className="font-display text-xl uppercase flex items-center gap-2"><Save size={20} className="text-rose-400" /> Save to JSON file</h3>
         <p className="text-xs text-stone-400 mt-1">While running <code className="bg-stone-800 px-1 rounded">npm run dev</code>, every edit above is written straight into <b className="text-white">src/data/site.json</b> — no Export step needed. Export below is only a backup (e.g. for static hosting).</p>
         <div className="flex flex-wrap gap-2 mt-3">
-          <Button onClick={download}>⬇ Export site.json (backup)</Button>
-          <Button variant="secondary" onClick={() => { navigator.clipboard?.writeText(exportJSON()); alert('Copied ✅ — paste into src/data/site.json') }}>📋 Copy JSON</Button>
-          <Button variant="secondary" onClick={() => confirm('Reset everything to defaults?') && resetAll()}>↩ Reset defaults</Button>
+          <Button onClick={download}><span className="inline-flex items-center gap-1.5"><Download size={16} /> Export site.json (backup)</span></Button>
+          <Button variant="secondary" onClick={() => { navigator.clipboard?.writeText(exportJSON()); alert('Copied! Paste into src/data/site.json') }}><span className="inline-flex items-center gap-1.5"><Copy size={16} /> Copy JSON</span></Button>
+          <Button variant="secondary" onClick={() => confirm('Reset everything to defaults?') && resetAll()}><span className="inline-flex items-center gap-1.5"><RotateCcw size={16} /> Reset defaults</span></Button>
         </div>
       </Card>
       <Card>
         <h3 className="font-display text-xl uppercase mb-2">Import JSON</h3>
         <textarea value={text} onChange={(e) => setText(e.target.value)} rows={6} placeholder='Paste exported site.json here...' className="w-full px-3 py-2 border border-white/10 rounded-xl bg-stone-950 text-xs font-mono" />
-        <Button className="mt-3" onClick={() => { try { importJSON(JSON.parse(text)); alert('Imported ✅') } catch { alert('Invalid JSON') } }}>Import ✅</Button>
+        <Button className="mt-3" onClick={() => { try { importJSON(JSON.parse(text)); alert('Imported!') } catch { alert('Invalid JSON') } }}><span className="inline-flex items-center gap-1.5"><Upload size={16} /> Import</span></Button>
       </Card>
     </div>
   )
@@ -317,20 +329,20 @@ export default function AdminDashboard() {
   const nav = useNavigate()
   const [tab, setTab] = useState('content')
   const tabs = [
-    { key: 'content', label: 'Content', icon: '📝' },
-    { key: 'packages', label: 'Packages', icon: '📦' },
-    { key: 'results', label: 'Results', icon: '🏆' },
-    { key: 'testimonials', label: 'Reviews', icon: '💬' },
-    { key: 'services', label: 'Services', icon: '⚡' },
-    { key: 'programs', label: 'Programs', icon: '🏋️' },
-    { key: 'settings', label: 'JSON / Save', icon: '💾' },
+    { key: 'content', label: 'Content', Icon: FileText },
+    { key: 'packages', label: 'Packages', Icon: Package },
+    { key: 'results', label: 'Results', Icon: Trophy },
+    { key: 'testimonials', label: 'Reviews', Icon: MessageCircle },
+    { key: 'services', label: 'Services', Icon: Zap },
+    { key: 'programs', label: 'Programs', Icon: Dumbbell },
+    { key: 'settings', label: 'JSON / Save', Icon: Save },
   ]
   return (
     <div className="bg-stone-950 text-stone-100 min-h-screen">
       <div className="container-x py-4 flex justify-between items-center">
-        <h1 className="font-display text-2xl uppercase">🔒 Admin <span className="text-fire">Dashboard</span></h1>
+        <h1 className="font-display text-2xl uppercase flex items-center gap-2"><Lock size={22} className="text-rose-400" /> Admin <span className="text-fire">Dashboard</span></h1>
         <div className="flex gap-2">
-          <button onClick={() => nav('/')} className="text-xs bg-white/10 px-3 py-2 rounded-xl">View site →</button>
+          <button onClick={() => nav('/')} className="text-xs bg-white/10 px-3 py-2 rounded-xl inline-flex items-center gap-1.5">View site <ArrowRight size={13} /></button>
           <button onClick={() => { logout(); nav('/elsum-admin/login') }} className="text-xs bg-red-600 px-3 py-2 rounded-xl font-bold">Logout</button>
         </div>
       </div>

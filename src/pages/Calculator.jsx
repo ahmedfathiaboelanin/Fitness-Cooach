@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import { Calculator as CalculatorIcon, Target, Dumbbell, Droplets, ArrowRight, MessageCircle } from 'lucide-react'
 import { useSiteStore } from '../store/useSiteStore'
 import { useT, useL } from '../i18n/useT'
 import { Card, Button, SectionTitle } from '../components/ui'
@@ -48,8 +49,8 @@ export default function Calculator() {
 
   const shareText = result
     ? (isAR
-      ? `أهلاً ${pick(coach, 'firstName')}! حسبت سعراتي 🔥\n\nBMR: ${result.bmr}\nTDEE: ${result.tdee}\n🎯 المستهدف: ${result.target} سعرة/يوم\n💪 البروتين: ${result.protein}\n\nعايز خطة مخصصة 🙏`
-      : `Hi ${pick(coach, 'firstName')}! I calculated my calories 🔥\n\nBMR: ${result.bmr}\nTDEE: ${result.tdee}\n🎯 Target: ${result.target} kcal/day\n💪 Protein: ${result.protein}\n\nI want a custom plan 🙏`)
+      ? `أهلاً ${pick(coach, 'firstName')}! حسبت سعراتي\n\nBMR: ${result.bmr}\nTDEE: ${result.tdee}\nالمستهدف: ${result.target} سعرة/يوم\nالبروتين: ${result.protein}\n\nعايز خطة مخصصة`
+      : `Hi ${pick(coach, 'firstName')}! I calculated my calories\n\nBMR: ${result.bmr}\nTDEE: ${result.tdee}\nTarget: ${result.target} kcal/day\nProtein: ${result.protein}\n\nI want a custom plan`)
     : ''
 
   const numCls = 'w-full px-4 py-2.5 border border-white/10 rounded-xl bg-stone-950 text-white placeholder:text-stone-500'
@@ -61,7 +62,7 @@ export default function Calculator() {
       <div className="relative container-x py-10 max-w-3xl">
         <SectionTitle
           center
-          eyebrow={isAR ? '🧮 احسب سعراتك' : '🧮 KNOW YOUR NUMBERS'}
+          eyebrow={isAR ? 'احسب سعراتك' : 'KNOW YOUR NUMBERS'}
           title={isAR ? <>حاسبة <span className="text-fire">السعرات (BMR)</span></> : <>BMR <span className="text-fire">Calorie Calculator</span></>}
           subtitle={isAR ? 'معادلة Mifflin-St Jeor — تقدير مريح للعين وواضح، والنتيجة النهائية مع محمد على واتساب.' : 'Mifflin-St Jeor estimate — eye-comfort reading, final plan with Mohammad on WhatsApp.'}
         />
@@ -69,7 +70,7 @@ export default function Calculator() {
           <div>
             <label className="text-sm font-bold text-stone-300">{isAR ? 'النوع' : 'Gender'}</label>
             <div className="flex gap-2 mt-2 bg-stone-950 border border-white/10 rounded-2xl p-1.5 w-fit">
-              {[{ id: 'male', en: '♂ Male', ar: '♂ ذكر' }, { id: 'female', en: '♀ Female', ar: '♀ أنثى' }].map((g) => (
+              {[{ id: 'male', en: 'Male', ar: 'ذكر' }, { id: 'female', en: 'Female', ar: 'أنثى' }].map((g) => (
                 <button key={g.id} onClick={() => setGender(g.id)} className={segBtn(gender === g.id)}>{isAR ? g.ar : g.en}</button>
               ))}
             </div>
@@ -101,28 +102,28 @@ export default function Calculator() {
             </div>
           </div>
 
-          <Button className="w-full" onClick={() => setShow(true)}>{isAR ? 'احسب سعراتي 🧮' : 'Calculate my calories 🧮'}</Button>
+          <Button className="w-full" onClick={() => setShow(true)}><span className="inline-flex items-center gap-2"><CalculatorIcon size={18} /> {isAR ? 'احسب سعراتي' : 'Calculate my calories'}</span></Button>
 
           {show && (
             result ? (
               <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { label: 'BMR', value: result.bmr, unit: isAR ? 'سعرة' : 'kcal' },
-                  { label: 'TDEE', value: result.tdee, unit: isAR ? 'سعرة' : 'kcal' },
-                  { label: isAR ? '🎯 المستهدف' : '🎯 Target', value: result.target, unit: isAR ? 'سعرة/يوم' : 'kcal/day', hot: true },
-                  { label: isAR ? '💪 بروتين' : '💪 Protein', value: result.protein, unit: '' },
+                  { label: 'BMR', value: result.bmr, unit: isAR ? 'سعرة' : 'kcal', Icon: null },
+                  { label: 'TDEE', value: result.tdee, unit: isAR ? 'سعرة' : 'kcal', Icon: null },
+                  { label: isAR ? 'المستهدف' : 'Target', value: result.target, unit: isAR ? 'سعرة/يوم' : 'kcal/day', hot: true, Icon: Target },
+                  { label: isAR ? 'بروتين' : 'Protein', value: result.protein, unit: '', Icon: Dumbbell },
                 ].map((r) => (
                   <div key={r.label} className={`rounded-2xl p-4 text-center border ${r.hot ? 'bg-fire-gradient text-white border-transparent shadow-fire-lg' : 'bg-stone-950 border-white/10'}`}>
-                    <div className={`text-[11px] font-extrabold uppercase tracking-wider ${r.hot ? 'text-white/85' : 'text-stone-400'}`}>{r.label}</div>
+                    <div className={`text-[11px] font-extrabold uppercase tracking-wider flex items-center justify-center gap-1 ${r.hot ? 'text-white/85' : 'text-stone-400'}`}>{r.Icon && <r.Icon size={12} />}{r.label}</div>
                     <div className={`font-display text-2xl mt-1 ${r.hot ? '' : 'text-fire'}`}>{r.value}</div>
                     <div className={`text-[11px] ${r.hot ? 'text-white/80' : 'text-stone-500'}`}>{r.unit}</div>
                   </div>
                 ))}
-                <div className="col-span-2 sm:col-span-4 text-center text-xs text-stone-400">
-                  💧 {isAR ? `مياه مقترحة: ${result.water}/يوم` : `Suggested water: ${result.water}/day`} • {isAR ? 'تقدير مبدئي — خطتك النهائية مع محمد' : 'Rough estimate — final plan with Mohammad'}
+                <div className="col-span-2 sm:col-span-4 text-center text-xs text-stone-400 flex items-center justify-center gap-1.5">
+                  <Droplets size={13} className="text-rose-400" /> {isAR ? `مياه مقترحة: ${result.water}/يوم` : `Suggested water: ${result.water}/day`} • {isAR ? 'تقدير مبدئي — خطتك النهائية مع محمد' : 'Rough estimate — final plan with Mohammad'}
                 </div>
                 <div className="col-span-2 sm:col-span-4 flex flex-col sm:flex-row gap-2">
-                  <a href={waLink(shareText)} target="_blank" rel="noreferrer" className="flex-1 text-center bg-[#25D366] text-white font-extrabold px-5 py-2.5 rounded-xl">{isAR ? 'ابعت النتيجة لمحمد على واتساب ←' : 'Send result to Mohammad →'}</a>
+                  <a href={waLink(shareText)} target="_blank" rel="noreferrer" className="btn-wa flex-1 text-center font-extrabold px-5 py-2.5 rounded-xl inline-flex items-center justify-center gap-2"><MessageCircle size={18} /> {isAR ? 'ابعت النتيجة لمحمد على واتساب' : 'Send result to Mohammad'} <ArrowRight size={16} className="rtl:rotate-180" /></a>
                   <WhatsAppButton text={shareText} label={isAR ? 'استفسر عن الخطة' : 'Ask about a plan'} className="flex-1" />
                 </div>
               </motion.div>

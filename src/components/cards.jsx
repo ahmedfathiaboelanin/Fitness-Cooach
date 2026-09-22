@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Flame } from 'lucide-react'
 import { Badge } from './ui'
 import { useL, useT } from '../i18n/useT'
 
@@ -18,7 +19,7 @@ export function WorkoutCard({ plan }) {
       </div>
       <div className="p-5">
         <h3 className="font-bold text-white group-hover:text-rose-300 transition">{pick(plan, 'title')}</h3>
-        <p className="text-sm text-stone-400 mt-1">🔥 {plan.durationWeeks} weeks • {plan.daysPerWeek}x/week • {plan.durationMin} min</p>
+        <p className="text-sm text-stone-400 mt-1 flex items-center gap-1.5"><Flame size={14} className="text-rose-400" /> {plan.durationWeeks} weeks • {plan.daysPerWeek}x/week • {plan.durationMin} min</p>
         <Link to={`/workouts/${plan.id}`} className="inline-block mt-3 text-sm font-bold text-rose-400 hover:text-rose-300">{t('viewProgram')}</Link>
       </div>
     </motion.div>
