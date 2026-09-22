@@ -1,0 +1,383 @@
+{
+  "coach": {
+    "name": "Mohammad Elsum",
+    "name_ar": "محمد الصََم",
+    "firstName": "Mohammad",
+    "firstName_ar": "محمد",
+    "title": "Gym Coach & Online Coach",
+    "title_ar": "مدرب جيم ومدرب أونلاين",
+    "tagline": "Build muscle. Burn fat. Stay consistent.",
+    "tagline_ar": "ابنِ عضلات. احرق دهون. خليك مستمر.",
+    "location": "Egypt • Available worldwide online",
+    "location_ar": "مصر • متاح أونلاين لكل العالم",
+    "avatar": "https://images.unsplash.com/photo-1567013127542-490d757e51fc?w=600&q=80",
+    "cover": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=80",
+    "bio": "I'm Mohammad Elsum — gym coach and online coach helping beginners to advanced trainees get real, sustainable results. No crash diets, no random workouts. Just a clear plan for training, nutrition and accountability, whether we train together in the gym or fully online.",
+    "bio_ar": "أنا محمد الصََم — مدرب جيم ومدرب أونلاين، بساعد المبتدئين والمحترفين يوصلوا لنتائج حقيقية ومستمرة. بدون دايت قاسي وبدون تمارين عشوائية. خطة واضحة للتمرين والتغذية والمتابعة، سواء اتمرنا مع بعض في الجيم أو أونلاين بالكامل.",
+    "whatsappNumber": "201123118787",
+    "whatsappDisplay": "+20 112 311 8787",
+    "stats": [
+      {
+        "value": "5+",
+        "label": "Years Coaching",
+        "label_ar": "سنين خبرة"
+      },
+      {
+        "value": "200+",
+        "label": "Clients Coached",
+        "label_ar": "متدرب"
+      },
+      {
+        "value": "Online",
+        "label": "& In-Gym",
+        "label_ar": "أونلاين وجيم"
+      },
+      {
+        "value": "100%",
+        "label": "Custom Plans",
+        "label_ar": "خطط مخصصة"
+      }
+    ],
+    "certifications": [
+      "Certified Gym Trainer",
+      "Online Coaching Specialist",
+      "Strength & Hypertrophy",
+      "Fat-Loss Nutrition Coaching"
+    ],
+    "certifications_ar": [
+      "مدرب جيم معتمد",
+      "متخصص تدريب أونلاين",
+      "القوة والضخامة العضلية",
+      "تغذية التخسيس"
+    ],
+    "specializations": [
+      "Muscle Gain",
+      "Fat Loss",
+      "Strength",
+      "Beginners",
+      "Online Coaching",
+      "Nutrition Habits"
+    ],
+    "specializations_ar": [
+      "زيادة العضلات",
+      "حرق الدهون",
+      "القوة",
+      "المبتدئين",
+      "التدريب الأونلاين",
+      "عادات التغذية"
+    ],
+    "approach": [
+      {
+        "title": "1. Assessment",
+        "title_ar": "1. التقييم",
+        "text": "Goal, lifestyle, injury history, equipment and current level. Everything starts from where YOU are.",
+        "text_ar": "الهدف، أسلوب حياتك، الإصابات، الأدوات المتاحة ومستواك الحالي. بنبدأ من مكانك أنت."
+      },
+      {
+        "title": "2. Custom Plan",
+        "title_ar": "2. خطة مخصصة",
+        "text": "Training split + nutrition targets + cardio steps, built for fat loss, muscle gain or strength.",
+        "text_ar": "جدول تمرين + أهداف تغذية + كارديو، مصمم للتخسيس أو الزيادة أو القوة."
+      },
+      {
+        "title": "3. Weekly Follow-up",
+        "title_ar": "3. متابعة أسبوعية",
+        "text": "Check-ins on WhatsApp, plan adjustments, video form review and constant accountability.",
+        "text_ar": "متابعة على واتساب، تعديل الخطة، مراجعة الأداء بالفيديو والتزام مستمر."
+      }
+    ]
+  },
+  "packages": [
+    {
+      "id": "online",
+      "name": "Online Coaching",
+      "name_ar": "التدريب الأونلاين",
+      "price": "1500 EGP",
+      "period": "/month",
+      "period_ar": "/شهر",
+      "tag": "Most Popular",
+      "tag_ar": "الأكثر طلباً",
+      "features": [
+        "Fully custom training program",
+        "Nutrition targets + meal structure",
+        "Weekly WhatsApp check-in",
+        "Video form review",
+        "Plan adjustments every week"
+      ],
+      "features_ar": [
+        "برنامج تمرين مخصص بالكامل",
+        "أهداف تغذية ونظام وجبات",
+        "متابعة أسبوعية على واتساب",
+        "مراجعة الأداء بالفيديو",
+        "تعديل الخطة كل أسبوع"
+      ],
+      "whatsappText": "Hi Mohammad! I want to join ONLINE COACHING (monthly). My goal is:",
+      "whatsappText_ar": "أهلاً محمد! عايز أشترك في التدريب الأونلاين (شهري). هدفي هو:",
+      "highlight": true
+    },
+    {
+      "id": "gym",
+      "name": "1-1 Gym Sessions",
+      "name_ar": "تمارين برايفت في الجيم",
+      "price": "250 EGP",
+      "period": "/session",
+      "period_ar": "/حصة",
+      "tag": "In Person",
+      "tag_ar": "حضوري",
+      "features": [
+        "Personal training in the gym",
+        "Technique correction live",
+        "Strength & hypertrophy focus",
+        "Nutrition tips after session",
+        "Book single or packs"
+      ],
+      "features_ar": [
+        "تدريب شخصي في الجيم",
+        "تصحيح التكنيك مباشرة",
+        "تركيز على القوة والضخامة",
+        "نصايح تغذية بعد الحصة",
+        "احجز حصة أو باكدج"
+      ],
+      "whatsappText": "Hi Mohammad! I want to book a 1-1 GYM SESSION. Preferred day/time:",
+      "whatsappText_ar": "أهلاً محمد! عايز أحجز حصة برايفت في الجيم. اليوم/الوقت المناسب:",
+      "highlight": false
+    },
+    {
+      "id": "hybrid",
+      "name": "Hybrid Transformation",
+      "name_ar": "التحول الشامل",
+      "price": "4000 EGP",
+      "period": "/12 weeks",
+      "period_ar": "/12 أسبوع",
+      "tag": "Best Results",
+      "tag_ar": "أفضل نتائج",
+      "features": [
+        "Gym sessions + online follow-up",
+        "Full 12-week transformation plan",
+        "Nutrition + cardio protocol",
+        "Weekly measurements review",
+        "Priority WhatsApp support"
+      ],
+      "features_ar": [
+        "حصص جيم + متابعة أونلاين",
+        "خطة تحول كاملة 12 أسبوع",
+        "بروتوكول تغذية وكارديو",
+        "مراجعة المقاسات أسبوعياً",
+        "دعم واتساب بأولوية"
+      ],
+      "whatsappText": "Hi Mohammad! I'm interested in the HYBRID TRANSFORMATION (12 weeks). My goal is:",
+      "whatsappText_ar": "أهلاً محمد! مهتم بالتحول الشامل (12 أسبوع). هدفي هو:",
+      "highlight": false
+    }
+  ],
+  "transformations": [
+    {
+      "id": "t1",
+      "name": "Ahmed — Fat Loss",
+      "name_ar": "أحمد — تخسيس",
+      "result": "-14 kg in 16 weeks",
+      "result_ar": "-14 كجم في 16 أسبوع",
+      "goal": "Fat Loss",
+      "goal_ar": "تخسيس",
+      "image": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&q=80",
+      "text": "Online coaching + daily steps. No extreme diet, just consistency.",
+      "text_ar": "تدريب أونلاين + خطوات يومية. بدون دايت قاسي، بس استمرارية."
+    },
+    {
+      "id": "t2",
+      "name": "Omar — Muscle Gain",
+      "name_ar": "عمر — زيادة عضلات",
+      "result": "+6 kg lean muscle",
+      "result_ar": "+6 كجم عضلات صافية",
+      "goal": "Muscle Gain",
+      "goal_ar": "زيادة عضلات",
+      "image": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80",
+      "text": "4-day hypertrophy split with progressive overload and nutrition follow-up.",
+      "text_ar": "جدول ضخامة 4 أيام مع زيادة تدريجية ومتابعة تغذية."
+    },
+    {
+      "id": "t3",
+      "name": "Youssef — Strength",
+      "name_ar": "يوسف — قوة",
+      "result": "100 → 140 kg squat",
+      "result_ar": "سكوات من 100 لـ 140 كجم",
+      "goal": "Strength",
+      "goal_ar": "قوة",
+      "image": "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&q=80",
+      "text": "In-gym sessions focused on technique + strength block programming.",
+      "text_ar": "حصص في الجيم ركزت على التكنيك وبرنامج قوة."
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "t1",
+      "name": "Ahmed R.",
+      "name_ar": "أحمد ر.",
+      "role": "Online Client — Lost 14kg",
+      "role_ar": "عميل أونلاين — خسر 14 كجم",
+      "avatar": "https://i.pravatar.cc/100?img=11",
+      "text": "Mohammad changed everything. Clear plan, weekly follow-up on WhatsApp, and I finally stayed consistent.",
+      "text_ar": "محمد غيّر كل حاجة. خطة واضحة ومتابعة أسبوعية على واتساب، وأخيراً انتظمت."
+    },
+    {
+      "id": "t2",
+      "name": "Karim S.",
+      "name_ar": "كريم س.",
+      "role": "Gym Client — +6kg muscle",
+      "role_ar": "عميل جيم — +6 كجم عضلات",
+      "avatar": "https://i.pravatar.cc/100?img=12",
+      "text": "Training with Mohammad in the gym is different level. Technique, intensity, focus. Worth every pound.",
+      "text_ar": "التمرين مع محمد في الجيم مستوى تاني. تكنيك وشدة وتركيز. يستاهل كل جنيه."
+    },
+    {
+      "id": "t3",
+      "name": "Nour A.",
+      "name_ar": "نور أ.",
+      "role": "Hybrid — 12 weeks",
+      "role_ar": "هجين — 12 أسبوع",
+      "avatar": "https://i.pravatar.cc/100?img=32",
+      "text": "I was scared of the gym as a beginner. He made it simple and I got stronger every single week.",
+      "text_ar": "كنت خايفة من الجيم كمبتدئة. هو بسّط كل حاجة وبقيت أقوى كل أسبوع."
+    }
+  ],
+  "services": [
+    {
+      "title": "Gym Personal Training",
+      "title_ar": "تدريب شخصي في الجيم",
+      "desc": "1-1 sessions with full attention on form, intensity and progression.",
+      "desc_ar": "حصص برايفت بتركيز كامل على الأداء والشدة والتطور.",
+      "icon": "🏋️"
+    },
+    {
+      "title": "Online Coaching",
+      "title_ar": "تدريب أونلاين",
+      "desc": "Train anywhere. Custom plan + nutrition + weekly WhatsApp check-ins.",
+      "desc_ar": "اتمرن من أي مكان. خطة مخصصة + تغذية + متابعة أسبوعية.",
+      "icon": "💻"
+    },
+    {
+      "title": "Nutrition Guidance",
+      "title_ar": "إرشاد غذائي",
+      "desc": "Realistic eating structure for fat loss or muscle gain — no starvation.",
+      "desc_ar": "نظام أكل واقعي للتخسيس أو الزيادة — بدون حرمان.",
+      "icon": "🥗"
+    },
+    {
+      "title": "Technique Review",
+      "title_ar": "مراجعة التكنيك",
+      "desc": "Send videos on WhatsApp, get detailed form corrections.",
+      "desc_ar": "ابعت فيديوهات على واتساب وخد تصحيح مفصّل للأداء.",
+      "icon": "🎥"
+    }
+  ],
+  "programs": [
+    {
+      "id": "w1",
+      "title": "Fat Burner HIIT - Beginner",
+      "title_ar": "حرق الدهون HIIT - مبتدئ",
+      "level": "Beginner",
+      "level_ar": "مبتدئ",
+      "goal": "fat loss",
+      "goal_ar": "حرق دهون",
+      "durationWeeks": 4,
+      "daysPerWeek": 3,
+      "durationMin": 30,
+      "image": "https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=600&q=80",
+      "description": "Low-impact HIIT to kickstart fat loss without equipment.",
+      "description_ar": "هيت خفيف لبدء حرق الدهون بدون أدوات.",
+      "popular": true,
+      "exercises": [
+        {
+          "name": "Jumping Jacks",
+          "sets": 3,
+          "reps": "45 sec",
+          "rest": "15 sec"
+        },
+        {
+          "name": "Bodyweight Squats",
+          "sets": 3,
+          "reps": "15",
+          "rest": "30 sec"
+        },
+        {
+          "name": "Push-ups (knees)",
+          "sets": 3,
+          "reps": "10",
+          "rest": "30 sec"
+        }
+      ]
+    },
+    {
+      "id": "w2",
+      "title": "Hypertrophy Builder - Intermediate",
+      "title_ar": "بناء العضلات - متوسط",
+      "level": "Intermediate",
+      "level_ar": "متوسط",
+      "goal": "muscle gain",
+      "goal_ar": "زيادة عضلات",
+      "durationWeeks": 8,
+      "daysPerWeek": 4,
+      "durationMin": 60,
+      "image": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80",
+      "description": "Classic push/pull/legs split for lean mass.",
+      "description_ar": "جدول دفع/سحب/رجل كلاسيك لزيادة صافية.",
+      "popular": true,
+      "exercises": [
+        {
+          "name": "Barbell Bench Press",
+          "sets": 4,
+          "reps": "8-10",
+          "rest": "90 sec"
+        },
+        {
+          "name": "Bent Over Row",
+          "sets": 4,
+          "reps": "8-10",
+          "rest": "90 sec"
+        },
+        {
+          "name": "Overhead Press",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": "60 sec"
+        }
+      ]
+    },
+    {
+      "id": "w3",
+      "title": "Powerlifting Strength - Advanced",
+      "title_ar": "القوة - متقدم",
+      "level": "Advanced",
+      "level_ar": "متقدم",
+      "goal": "strength",
+      "goal_ar": "قوة",
+      "durationWeeks": 12,
+      "daysPerWeek": 4,
+      "durationMin": 90,
+      "image": "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&q=80",
+      "description": "Squat / Bench / Deadlift focused strength block.",
+      "description_ar": "بلوك قوة مركز على السكوات والبنش والديدليفت.",
+      "popular": true,
+      "exercises": [
+        {
+          "name": "Squat",
+          "sets": 5,
+          "reps": "5",
+          "rest": "3 min"
+        },
+        {
+          "name": "Bench Press",
+          "sets": 5,
+          "reps": "5",
+          "rest": "3 min"
+        },
+        {
+          "name": "Deadlift",
+          "sets": 3,
+          "reps": "3",
+          "rest": "3 min"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,158 @@
+🏋️ Gym Coaching Platform (Frontend Only)
+
+A modern React frontend application for a gym coaching platform where users can browse coaches, view workout programs, track progress UI, and simulate booking personal training sessions.
+
+NOTE:
+This project is frontend-only and uses mock data only.
+No backend or API integration.
+
+--------------------------------------------------
+
+TECH STACK:
+- React (Vite)
+- React Router DOM
+- Tailwind CSS
+- Framer Motion (animations)
+- React Hook Form (UI forms only)
+- Zustand / Redux Toolkit (optional state management)
+- Mock JSON data
+
+--------------------------------------------------
+
+PROJECT STRUCTURE:
+
+src/
+│
+├── assets/            # Images, icons, banners
+├── components/        # Reusable UI components
+├── layouts/           # Navbar, Sidebar, Footer
+├── pages/             # Route pages
+├── features/
+│   ├── coaches/
+│   ├── workouts/
+│   ├── booking/
+│   ├── progress/
+│   ├── dashboard/
+│   └── auth/
+│
+├── data/              # Mock data (JSON files)
+├── hooks/             # Custom hooks
+├── store/             # Optional state management
+├── utils/             # Helper functions
+├── App.jsx
+└── main.jsx
+
+--------------------------------------------------
+
+FEATURES
+
+🏠 LANDING PAGE:
+- Hero section (gym motivation CTA)
+- Featured coaches
+- Popular workout programs
+- Membership plans preview
+- Testimonials section
+
+🏋️ COACHES:
+- Coaches listing page
+- Filters:
+  - Goal (fat loss / muscle gain / strength)
+  - Rating
+  - Price
+- Coach profile:
+  - Bio
+  - Certifications
+  - Specializations
+  - Reviews
+  - Availability UI
+
+📅 BOOKING SYSTEM (UI ONLY):
+- Select coach
+- Choose date & time
+- Session summary
+- Confirmation screen
+
+🏋️ WORKOUT PROGRAMS:
+- Workout plans:
+  - Beginner / Intermediate / Advanced
+- Program details:
+  - Exercises list
+  - Sets / reps UI
+  - Duration
+
+📊 PROGRESS TRACKING:
+- Weight progress UI (mock charts)
+- Body measurements UI
+- Weekly progress cards
+
+🧑‍🏫 DASHBOARDS:
+
+User Dashboard:
+- Active sessions
+- Progress overview
+- Saved coaches
+
+Coach Dashboard:
+- Schedule UI
+- Booking requests (mock)
+- Workout plan management UI
+
+💬 CHAT UI (MOCK):
+- Conversations list
+- Chat window UI
+- Message bubbles
+
+🎥 TRAINING SESSION UI:
+- Session layout screen
+- Timer UI
+- Controls (mute / camera / end session)
+
+🔔 NOTIFICATIONS:
+- Booking updates
+- Messages
+- Progress reminders
+
+🔐 AUTH UI (FRONTEND ONLY):
+- Login page
+- Register page
+- Role selection (coach / client)
+
+--------------------------------------------------
+
+UI SYSTEM:
+- Buttons
+- Cards (coach / workout / plan)
+- Modals
+- Inputs
+- Badges
+- Fully responsive design
+- Framer Motion animations
+
+--------------------------------------------------
+
+DATA:
+All data is stored locally inside:
+/src/data/
+
+Includes:
+- Coaches
+- Workout plans
+- Sessions
+- Users
+- Progress data
+
+--------------------------------------------------
+
+LIMITATIONS:
+- No backend integration
+- No real authentication
+- No payments
+- No real chat or video calls
+
+Everything is UI simulation using mock data only.
+
+--------------------------------------------------
+
+AUTHOR:
+Ahmed Fathi
+Frontend Developer (React)
