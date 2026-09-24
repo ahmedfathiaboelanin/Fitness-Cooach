@@ -1,7 +1,7 @@
 // UI chrome dictionary (admin stays English)
 export const dict = {
   en: {
-    nav: { home: 'Home', about: 'About', programs: 'Programs', results: 'Results', packages: 'Packages', contact: 'Contact', coaching: 'Coaching', calculator: 'BMR Calculator', booking: 'Book Now' },
+    nav: { home: 'Home', about: 'About', programs: 'Programs', supplements: 'Supplements', results: 'Results', packages: 'Packages', contact: 'Contact', coaching: 'Coaching', calculator: 'BMR Calculator', booking: 'Book Now' },
     bookNow: 'Book Now',
     whatsapp: 'WhatsApp',
     startWhatsapp: 'Start on WhatsApp',
@@ -22,7 +22,7 @@ export const dict = {
     footerTagline: 'Train hard. Stay humble. Stay hungry.',
   },
   ar: {
-    nav: { home: 'الرئيسية', about: 'عني', programs: 'البرامج', results: 'النتائج', packages: 'الباقات', contact: 'تواصل', coaching: 'التدريب', calculator: 'حاسبة السعرات', booking: 'احجز' },
+    nav: { home: 'الرئيسية', about: 'عني', programs: 'البرامج', supplements: 'المكملات', results: 'النتائج', packages: 'الباقات', contact: 'تواصل', coaching: 'التدريب', calculator: 'حاسبة السعرات', booking: 'احجز' },
     bookNow: 'احجز الآن',
     whatsapp: 'واتساب',
     startWhatsapp: 'ابدأ على واتساب',

@@ -16,7 +16,7 @@ function loadInitial() {
       transformations: parsed.transformations || siteDefaults.transformations,
       testimonials: parsed.testimonials || siteDefaults.testimonials,
       services: parsed.services || siteDefaults.services,
-      programs: parsed.programs || siteDefaults.programs,
+      supplements: parsed.supplements || siteDefaults.supplements,
     }
   } catch {
     return siteDefaults
@@ -24,8 +24,8 @@ function loadInitial() {
 }
 
 function snapshot(state) {
-  const { coach, packages, transformations, testimonials, services, programs } = state
-  return { coach, packages, transformations, testimonials, services, programs }
+  const { coach, packages, transformations, testimonials, services, supplements } = state
+  return { coach, packages, transformations, testimonials, services, supplements }
 }
 
 function persistLocal(state) {
@@ -68,7 +68,7 @@ export const useSiteStore = create((set, get) => {
           transformations: obj.transformations || [],
           testimonials: obj.testimonials || [],
           services: obj.services || [],
-          programs: obj.programs || [],
+          supplements: obj.supplements || [],
           fileBackend: 'connected',
           fileError: null,
         })
@@ -149,15 +149,19 @@ export const useSiteStore = create((set, get) => {
     },
     deleteService: (idx) => get()._setList('services', get().services.filter((_, i) => i !== idx)),
 
-    // programs
-    addProgram: (p) => get()._setList('programs', [...get().programs, { id: uid('prog'), exercises: [], popular: false, ...p }]),
-    updateProgram: (id, patch) => get()._setList('programs', get().programs.map((p) => (p.id === id ? { ...p, ...patch } : p))),
-    deleteProgram: (id) => get()._setList('programs', get().programs.filter((p) => p.id !== id)),
+    // supplements (coach shop — bulk-replaced by Excel upload)
+    setSupplements: (list) => {
+      set({ supplements: list })
+      persist(get())
+    },
+    addSupplement: (s) => get()._setList('supplements', [...get().supplements, { id: uid('sup'), ...s }]),
+    updateSupplement: (id, patch) => get()._setList('supplements', get().supplements.map((s) => (s.id === id ? { ...s, ...patch } : s))),
+    deleteSupplement: (id) => get()._setList('supplements', get().supplements.filter((s) => s.id !== id)),
 
     // ---- import / export / reset ----
     exportJSON: () => {
-      const { coach, packages, transformations, testimonials, services, programs } = get()
-      return JSON.stringify({ coach, packages, transformations, testimonials, services, programs }, null, 2)
+      const { coach, packages, transformations, testimonials, services, supplements } = get()
+      return JSON.stringify({ coach, packages, transformations, testimonials, services, supplements }, null, 2)
     },
     importJSON: (obj) => {
       set({
@@ -166,7 +170,7 @@ export const useSiteStore = create((set, get) => {
         transformations: obj.transformations || [],
         testimonials: obj.testimonials || [],
         services: obj.services || [],
-        programs: obj.programs || [],
+        supplements: obj.supplements || [],
       })
       persist(get())
     },

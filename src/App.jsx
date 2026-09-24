@@ -8,8 +8,7 @@ import About from './pages/About'
 import Results from './pages/Results'
 import Packages from './pages/Packages'
 import Contact from './pages/Contact'
-import Workouts from './pages/Workouts'
-import WorkoutDetail from './pages/WorkoutDetail'
+import Supplements from './pages/Supplements'
 import Booking from './pages/Booking'
 import Calculator from './pages/Calculator'
 import AdminLogin from './pages/AdminLogin'
@@ -61,10 +60,9 @@ function SiteRoutes() {
         <Route path="/results" element={<PageTurn><Results /></PageTurn>} />
         <Route path="/packages" element={<PageTurn><Packages /></PageTurn>} />
         <Route path="/contact" element={<PageTurn><Contact /></PageTurn>} />
-        <Route path="/booking" element={<PageTurn><Booking /></PageTurn>} />
-        <Route path="/calculator" element={<PageTurn><Calculator /></PageTurn>} />
-        <Route path="/workouts" element={<PageTurn><Workouts /></PageTurn>} />
-        <Route path="/workouts/:id" element={<PageTurn><WorkoutDetail /></PageTurn>} />
+            <Route path="/booking" element={<PageTurn><Booking /></PageTurn>} />
+            <Route path="/calculator" element={<PageTurn><Calculator /></PageTurn>} />
+            <Route path="/supplements" element={<PageTurn><Supplements /></PageTurn>} />
         <Route path="*" element={<PageTurn><div className="bg-stone-950 text-white min-h-screen"><div className="container-x py-20 text-center"><h1 className="font-display text-5xl">404</h1><p className="text-stone-400">Page not found</p></div></div></PageTurn>} />
       </Routes>
     </AnimatePresence>

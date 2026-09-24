@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Flame, Sun, Moon, MessageCircle, Dumbbell, Package, Trophy, CalendarDays, Calculator, Menu, X, ChevronDown, Globe } from 'lucide-react'
+import { Flame, Sun, Moon, MessageCircle, Package, Trophy, CalendarDays, Calculator, Pill, Menu, X, ChevronDown, Globe } from 'lucide-react'
 import { CoachLogo } from '../components/brand'
 import { waLink } from '../utils/whatsapp'
 import { useSiteStore } from '../store/useSiteStore'
@@ -35,7 +35,7 @@ function Toggles() {
 }
 
 const COACHING_LINKS = [
-  { to: '/workouts', key: 'programs', Icon: Dumbbell },
+  { to: '/supplements', key: 'supplements', Icon: Pill },
   { to: '/packages', key: 'packages', Icon: Package },
   { to: '/results', key: 'results', Icon: Trophy },
   { to: '/booking', key: 'booking', Icon: CalendarDays },
@@ -236,7 +236,7 @@ export function Footer() {
           <p className="text-sm">{pick(coach, 'title')}<br />{pick(coach, 'location')}</p>
           <a href={waLink('Hi Mohammad!')} target="_blank" rel="noreferrer" className="btn-wa inline-flex items-center gap-1.5 mt-4 text-sm px-4 py-2 rounded-xl font-extrabold"><MessageCircle size={16} /> {t('whatsapp')}</a>
         </div>
-        <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">Portfolio</h4><ul className="text-sm space-y-1"><li><Link className="hover:text-rose-400" to="/about">{t('nav.about')}</Link></li><li><Link className="hover:text-rose-400" to="/results">{t('nav.results')}</Link></li><li><Link className="hover:text-rose-400" to="/workouts">{t('nav.programs')}</Link></li></ul></div>
+        <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">Portfolio</h4><ul className="text-sm space-y-1"><li><Link className="hover:text-rose-400" to="/about">{t('nav.about')}</Link></li><li><Link className="hover:text-rose-400" to="/results">{t('nav.results')}</Link></li><li><Link className="hover:text-rose-400" to="/supplements">{t('nav.supplements')}</Link></li></ul></div>
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">Coaching</h4><ul className="text-sm space-y-1"><li><Link className="hover:text-rose-400" to="/packages">{t('nav.packages')}</Link></li><li><Link className="hover:text-rose-400" to="/booking">{t('bookNow')}</Link></li><li><Link className="hover:text-rose-400" to="/calculator">{t('nav.calculator')}</Link></li><li><Link className="hover:text-rose-400" to="/contact">{t('nav.contact')}</Link></li></ul></div>
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">No Excuses</h4><p className="font-display text-2xl text-fire uppercase leading-snug">{t('footerTagline')}</p></div>
       </div>

@@ -89,7 +89,7 @@
   },
   "packages": [
     {
-      "id": "online",
+      "id": "pkg-xls-muf15fp9-0",
       "name": "Online Coaching",
       "name_ar": "التدريب الأونلاين",
       "price": "1500 EGP",
@@ -116,7 +116,7 @@
       "highlight": true
     },
     {
-      "id": "gym",
+      "id": "pkg-xls-muf15fp9-1",
       "name": "1-1 Gym Sessions",
       "name_ar": "تمارين برايفت في الجيم",
       "price": "250 EGP",
@@ -143,7 +143,7 @@
       "highlight": false
     },
     {
-      "id": "hybrid",
+      "id": "pkg-xls-muf15fp9-2",
       "name": "Hybrid Transformation",
       "name_ar": "التحول الشامل",
       "price": "4000 EGP",
@@ -172,7 +172,7 @@
   ],
   "transformations": [
     {
-      "id": "t1",
+      "id": "res-xls-muf15fp9-3",
       "name": "Ahmed — Fat Loss",
       "name_ar": "أحمد — تخسيس",
       "result": "-14 kg in 16 weeks",
@@ -184,7 +184,7 @@
       "text_ar": "تدريب أونلاين + خطوات يومية. بدون دايت قاسي، بس استمرارية."
     },
     {
-      "id": "t2",
+      "id": "res-xls-muf15fp9-4",
       "name": "Omar — Muscle Gain",
       "name_ar": "عمر — زيادة عضلات",
       "result": "+6 kg lean muscle",
@@ -196,7 +196,7 @@
       "text_ar": "جدول ضخامة 4 أيام مع زيادة تدريجية ومتابعة تغذية."
     },
     {
-      "id": "t3",
+      "id": "res-xls-muf15fp9-5",
       "name": "Youssef — Strength",
       "name_ar": "يوسف — قوة",
       "result": "100 → 140 kg squat",
@@ -210,7 +210,7 @@
   ],
   "testimonials": [
     {
-      "id": "t1",
+      "id": "tes-xls-muf15fp9-6",
       "name": "Ahmed R.",
       "name_ar": "أحمد ر.",
       "role": "Online Client — Lost 14kg",
@@ -220,7 +220,7 @@
       "text_ar": "محمد غيّر كل حاجة. خطة واضحة ومتابعة أسبوعية على واتساب، وأخيراً انتظمت."
     },
     {
-      "id": "t2",
+      "id": "tes-xls-muf15fp9-7",
       "name": "Karim S.",
       "name_ar": "كريم س.",
       "role": "Gym Client — +6kg muscle",
@@ -230,7 +230,7 @@
       "text_ar": "التمرين مع محمد في الجيم مستوى تاني. تكنيك وشدة وتركيز. يستاهل كل جنيه."
     },
     {
-      "id": "t3",
+      "id": "tes-xls-muf15fp9-8",
       "name": "Nour A.",
       "name_ar": "نور أ.",
       "role": "Hybrid — 12 weeks",
@@ -270,114 +270,50 @@
       "icon": "🎥"
     }
   ],
-  "programs": [
+  "supplements": [
     {
-      "id": "w1",
-      "title": "Fat Burner HIIT - Beginner",
-      "title_ar": "حرق الدهون HIIT - مبتدئ",
-      "level": "Beginner",
-      "level_ar": "مبتدئ",
-      "goal": "fat loss",
-      "goal_ar": "حرق دهون",
-      "durationWeeks": 4,
-      "daysPerWeek": 3,
-      "durationMin": 30,
-      "image": "https://images.unsplash.com/photo-1599058917212-d750089bc07e?w=600&q=80",
-      "description": "Low-impact HIIT to kickstart fat loss without equipment.",
-      "description_ar": "هيت خفيف لبدء حرق الدهون بدون أدوات.",
-      "popular": true,
-      "exercises": [
-        {
-          "name": "Jumping Jacks",
-          "sets": 3,
-          "reps": "45 sec",
-          "rest": "15 sec"
-        },
-        {
-          "name": "Bodyweight Squats",
-          "sets": 3,
-          "reps": "15",
-          "rest": "30 sec"
-        },
-        {
-          "name": "Push-ups (knees)",
-          "sets": 3,
-          "reps": "10",
-          "rest": "30 sec"
-        }
-      ]
+      "id": "sup-xls-muf15fp9-9",
+      "name": "Whey Protein 2kg",
+      "name_ar": "واي بروتين 2 كجم",
+      "price": "2400 EGP",
+      "category": "Protein",
+      "category_ar": "بروتين",
+      "description": "24g protein per scoop for muscle recovery and growth.",
+      "description_ar": "24 جم بروتين لكل سكوب للاستشفاء وزيادة العضلات.",
+      "image": "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=600&q=80"
     },
     {
-      "id": "w2",
-      "title": "Hypertrophy Builder - Intermediate",
-      "title_ar": "بناء العضلات - متوسط",
-      "level": "Intermediate",
-      "level_ar": "متوسط",
-      "goal": "muscle gain",
-      "goal_ar": "زيادة عضلات",
-      "durationWeeks": 8,
-      "daysPerWeek": 4,
-      "durationMin": 60,
-      "image": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&q=80",
-      "description": "Classic push/pull/legs split for lean mass.",
-      "description_ar": "جدول دفع/سحب/رجل كلاسيك لزيادة صافية.",
-      "popular": true,
-      "exercises": [
-        {
-          "name": "Barbell Bench Press",
-          "sets": 4,
-          "reps": "8-10",
-          "rest": "90 sec"
-        },
-        {
-          "name": "Bent Over Row",
-          "sets": 4,
-          "reps": "8-10",
-          "rest": "90 sec"
-        },
-        {
-          "name": "Overhead Press",
-          "sets": 3,
-          "reps": "10-12",
-          "rest": "60 sec"
-        }
-      ]
+      "id": "sup-xls-muf15fp9-10",
+      "name": "Creatine Monohydrate",
+      "name_ar": "كرياتين مونوهيدرات",
+      "price": "900 EGP",
+      "category": "Performance",
+      "category_ar": "أداء",
+      "description": "5g daily for strength and power output.",
+      "description_ar": "5 جم يومياً للقوة والأداء.",
+      "image": "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=600&q=80"
     },
     {
-      "id": "w3",
-      "title": "Powerlifting Strength - Advanced",
-      "title_ar": "القوة - متقدم",
-      "level": "Advanced",
-      "level_ar": "متقدم",
-      "goal": "strength",
-      "goal_ar": "قوة",
-      "durationWeeks": 12,
-      "daysPerWeek": 4,
-      "durationMin": 90,
-      "image": "https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=600&q=80",
-      "description": "Squat / Bench / Deadlift focused strength block.",
-      "description_ar": "بلوك قوة مركز على السكوات والبنش والديدليفت.",
-      "popular": true,
-      "exercises": [
-        {
-          "name": "Squat",
-          "sets": 5,
-          "reps": "5",
-          "rest": "3 min"
-        },
-        {
-          "name": "Bench Press",
-          "sets": 5,
-          "reps": "5",
-          "rest": "3 min"
-        },
-        {
-          "name": "Deadlift",
-          "sets": 3,
-          "reps": "3",
-          "rest": "3 min"
-        }
-      ]
+      "id": "sup-xls-muf15fp9-11",
+      "name": "Pre-Workout Ignite",
+      "name_ar": "بري ورك آوت",
+      "price": "1200 EGP",
+      "category": "Performance",
+      "category_ar": "أداء",
+      "description": "Clean energy and focus for intense sessions.",
+      "description_ar": "طاقة وتركيز نظيف للحصص القوية.",
+      "image": "https://images.unsplash.com/photo-1546484959-fed7a4a6f0cf?w=600&q=80"
+    },
+    {
+      "id": "sup-xls-muf15fp9-12",
+      "name": "Omega-3 Fish Oil",
+      "name_ar": "أوميجا 3",
+      "price": "650 EGP",
+      "category": "Health",
+      "category_ar": "صحة",
+      "description": "Joint and heart support for hard trainers.",
+      "description_ar": "دعم المفاصل والقلب للرياضيين.",
+      "image": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&q=80"
     }
   ]
 }

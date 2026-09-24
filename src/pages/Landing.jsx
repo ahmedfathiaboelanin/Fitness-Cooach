@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Flame, Calculator, Check, Star, ArrowRight, Dumbbell, Laptop, Salad, Video } from 'lucide-react'
+import { Flame, Calculator, Check, Star, ArrowRight, Dumbbell, Laptop, Salad, Video, Pill } from 'lucide-react'
 import { useSiteStore } from '../store/useSiteStore'
 import { useT, useL } from '../i18n/useT'
-import { WorkoutCard } from '../components/cards'
 import { SectionTitle, Badge } from '../components/ui'
 import { WhatsAppButton } from '../components/WhatsApp'
 import { MarqueeStrip, EmberBackground, StatBurst, CoachLogo } from '../components/brand'
@@ -20,11 +19,9 @@ export default function Landing() {
   const transformations = useSiteStore((s) => s.transformations)
   const testimonials = useSiteStore((s) => s.testimonials)
   const services = useSiteStore((s) => s.services)
-  const programs = useSiteStore((s) => s.programs)
+  const supplements = useSiteStore((s) => s.supplements)
   const { t, isAR } = useT()
   const { pick, pickArr } = useL()
-  const popular = programs.filter((w) => w.popular).slice(0, 3)
-  const popularFallback = (popular.length ? popular : programs).slice(0, 3)
   const waStart = isAR ? 'أهلاً محمد! عايز أبدأ التدريب معاك. هدفي هو:' : 'Hi Mohammad! I want to start coaching with you. My goal is:'
   return (
     <div className="bg-stone-950 text-stone-100 overflow-x-hidden">
@@ -109,15 +106,29 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* PROGRAMS */}
+      {/* SUPPLEMENTS TEASER */}
       <section className="container-x py-16">
         <SectionTitle
-          title={isAR ? <>برامج <span className="text-fire">التدريب</span></> : <>Training <span className="text-fire">Programs</span></>}
-          subtitle={isAR ? 'مصممة من محمد — من المبتدئ للمتقدم. وخطتك بتتفصل عليك.' : 'Built by Mohammad — beginner to advanced. Your exact plan gets personalized.'}
+          title={isAR ? <>مكملات <span className="text-fire">موصى بها</span></> : <>Recommended <span className="text-fire">Supplements</span></>}
+          subtitle={isAR ? 'المكملات اللي برشحها لعملائي — اطلبها على واتساب' : 'What I recommend to my clients — order on WhatsApp'}
         />
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {popularFallback.map((w) => <WorkoutCard key={w.id} plan={w} />)}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {supplements.slice(0, 4).map((s, i) => (
+            <motion.div key={s.id} {...fadeUp} transition={{ delay: i * 0.06 }} whileHover={{ y: -6 }} className="card-fire overflow-hidden group">
+              <div className="relative overflow-hidden">
+                {s.image
+                  ? <img src={s.image} alt={pick(s, 'name')} loading="lazy" className="h-40 w-full object-cover group-hover:scale-105 transition duration-500" />
+                  : <div className="h-40 w-full bg-stone-950 flex items-center justify-center"><Pill size={38} className="text-rose-400" /></div>}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              </div>
+              <div className="p-4">
+                <h3 className="font-bold text-white text-sm">{pick(s, 'name')}</h3>
+                <div className="font-display text-lg text-fire mt-1">{s.price}</div>
+              </div>
+            </motion.div>
+          ))}
         </div>
+        <div className="text-center mt-7"><Link to="/supplements" className="btn-fire inline-flex items-center gap-2 px-6 py-3 rounded-xl font-extrabold text-white">{isAR ? 'تصفح المكملات' : 'Shop supplements'} <ArrowRight size={18} className="rtl:rotate-180" /></Link></div>
         <motion.div {...fadeUp} className="mt-8 rounded-3xl p-[2px] bg-fire-gradient shadow-fire-lg">
           <div className="bg-stone-950 rounded-3xl p-6 flex flex-col md:flex-row items-center gap-4 justify-between">
             <div>

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileText, Package, Trophy, MessageCircle, Zap, Dumbbell, Save, Lock, Download, Copy, RotateCcw, Upload, Plus, Star, Laptop, Salad, Video, Flame, ArrowRight } from 'lucide-react'
+import * as XLSX from 'xlsx'
+import { FileText, Package, Trophy, MessageCircle, Zap, Dumbbell, Save, Lock, Download, Copy, RotateCcw, Upload, Plus, Star, Pill, FileSpreadsheet, FileJson, ArrowRight, Laptop, Salad, Video, Flame } from 'lucide-react'
 import { useAdminStore } from '../store/useAdminStore'
 import { useSiteStore } from '../store/useSiteStore'
 import { Card, Button } from '../components/ui'
@@ -234,32 +235,137 @@ function ServicesTab() {
   )
 }
 
-function ProgramsTab() {
-  const list = useSiteStore((s) => s.programs)
-  const { addProgram, deleteProgram, updateProgram } = useSiteStore()
-  const [form, setForm] = useState({ title: '', level: 'Beginner', goal: 'fat loss', durationWeeks: 4, daysPerWeek: 3, durationMin: 30, image: '', description: '', popular: false })
+// ---------- SUPPLEMENTS (Excel upload replaces the whole list) ----------
+const SUPP_COLS = {
+  name: ['name', 'الاسم', 'product', 'المنتج'],
+  name_ar: ['name_ar', 'الاسم بالعربية'],
+  price: ['price', 'السعر'],
+  category: ['category', 'الفئة', 'القسم'],
+  category_ar: ['category_ar', 'الفئة بالعربية'],
+  description: ['description', 'الوصف'],
+  description_ar: ['description_ar', 'الوصف بالعربية'],
+  image: ['image', 'img', 'صورة', 'رابط الصورة'],
+}
+
+function rowGet(row, keys) {
+  for (const k of keys) {
+    if (row[k] != null && String(row[k]).trim() !== '') return String(row[k]).trim()
+  }
+  return ''
+}
+
+function SupplementsTab() {
+  const list = useSiteStore((s) => s.supplements)
+  const { setSupplements, addSupplement, updateSupplement, deleteSupplement } = useSiteStore()
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ name: '', name_ar: '', price: '', category: '', category_ar: '', description: '', description_ar: '', image: '' })
+  const [msg, setMsg] = useState('')
+
+  const downloadTemplate = () => {
+    const rows = [{
+      name: 'Whey Protein 2kg', name_ar: 'واي بروتين 2 كجم', price: '2400 EGP',
+      category: 'Protein', category_ar: 'بروتين',
+      description: '24g protein per scoop.', description_ar: '24 جم بروتين لكل سكوب.',
+      image: 'https://...',
+    }]
+    const ws = XLSX.utils.json_to_sheet(rows)
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Supplements')
+    XLSX.writeFile(wb, 'supplements-template.xlsx')
+  }
+
+  const onFile = (e) => {
+    const f = e.target.files?.[0]
+    if (!f) return
+    setMsg('')
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const wb = XLSX.read(ev.target.result, { type: 'array' })
+        const ws = wb.Sheets[wb.SheetNames[0]]
+        const rows = XLSX.utils.sheet_to_json(ws, { defval: '' })
+        const norm = rows.map((r) => {
+          const o = {}
+          Object.entries(r).forEach(([k, v]) => { o[String(k).trim().toLowerCase()] = v })
+          return o
+        })
+        const items = norm
+          .map((r, i) => ({
+            id: `sup-xls-${Date.now().toString(36)}-${i}`,
+            name: rowGet(r, SUPP_COLS.name),
+            name_ar: rowGet(r, SUPP_COLS.name_ar),
+            price: rowGet(r, SUPP_COLS.price),
+            category: rowGet(r, SUPP_COLS.category),
+            category_ar: rowGet(r, SUPP_COLS.category_ar),
+            description: rowGet(r, SUPP_COLS.description),
+            description_ar: rowGet(r, SUPP_COLS.description_ar),
+            image: rowGet(r, SUPP_COLS.image),
+          }))
+          .filter((s) => s.name)
+        if (!items.length) {
+          setMsg('No valid rows found — the sheet needs at least a "name" column.')
+          return
+        }
+        if (!confirm(`Replace all ${list.length} supplements with ${items.length} from "${f.name}"?`)) return
+        setSupplements(items)
+        setMsg(`Imported ${items.length} supplements from Excel — live on the site now.`)
+      } catch {
+        setMsg('Could not read that file. Use .xlsx, .xls or .csv.')
+      }
+      e.target.value = ''
+    }
+    reader.readAsArrayBuffer(f)
+  }
+
+  const saveOne = () => {
+    if (!form.name.trim()) return alert('Name required')
+    if (editing) updateSupplement(editing, form)
+    else addSupplement(form)
+    setEditing(null)
+    setForm({ name: '', name_ar: '', price: '', category: '', category_ar: '', description: '', description_ar: '', image: '' })
+  }
+
   return (
     <div className="space-y-4">
       <Card>
-        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><Dumbbell size={20} className="text-rose-400" /> Add program</h3>
-        <div className="grid sm:grid-cols-2 gap-3">
-          <Field label="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-          <div><label className={labelCls}>Level</label><select value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} className={`${inputCls} mt-1`}><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
-          <Field label="Goal" value={form.goal} onChange={(e) => setForm({ ...form, goal: e.target.value })} />
-          <Field label="Image URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
-          <Field label="Weeks" type="number" value={form.durationWeeks} onChange={(e) => setForm({ ...form, durationWeeks: +e.target.value })} />
-          <Field label="Days/week" type="number" value={form.daysPerWeek} onChange={(e) => setForm({ ...form, daysPerWeek: +e.target.value })} />
+        <h3 className="font-display text-xl uppercase mb-1 flex items-center gap-2"><FileSpreadsheet size={20} className="text-rose-400" /> Supplements from Excel</h3>
+        <p className="text-xs text-stone-400">Upload an Excel sheet to <b className="text-white">replace</b> the whole shop list. Columns: <code className="bg-stone-800 px-1 rounded">name, name_ar, price, category, category_ar, description, description_ar, image</code> (Arabic headers الاسم/السعر/الفئة/الوصف/صورة also work).</p>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <label className="btn-fire text-white text-sm font-extrabold px-4 py-2.5 rounded-xl cursor-pointer inline-flex items-center gap-1.5">
+            <Upload size={16} /> Upload Excel sheet
+            <input type="file" accept=".xlsx,.xls,.csv" onChange={onFile} className="hidden" />
+          </label>
+          <Button variant="secondary" onClick={downloadTemplate}><span className="inline-flex items-center gap-1.5"><Download size={16} /> Template</span></Button>
         </div>
-        <div className="mt-3"><Area label="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} /></div>
-        <label className="flex items-center gap-2 text-sm mt-2"><input type="checkbox" checked={!!form.popular} onChange={(e) => setForm({ ...form, popular: e.target.checked })} /> Show on homepage</label>
-        <Button className="mt-3" onClick={() => { if (!form.title) return alert('Title required'); addProgram(form); setForm({ title: '', level: 'Beginner', goal: 'fat loss', durationWeeks: 4, daysPerWeek: 3, durationMin: 30, image: '', description: '', popular: false }) }}><span className="inline-flex items-center gap-1.5"><Plus size={16} /> Add program</span></Button>
+        {msg && <p className="text-xs text-green-400 font-bold mt-2">{msg}</p>}
       </Card>
-      {list.map((p) => (
-        <Card key={p.id} className="flex justify-between items-center gap-3">
-          <div className="text-sm"><b className="text-white">{p.title}</b> <span className="text-stone-400">• {p.level} • {p.goal}</span></div>
+
+      <Card>
+        <h3 className="font-display text-xl uppercase mb-3 flex items-center gap-2"><Pill size={20} className="text-rose-400" /> {editing ? 'Edit supplement' : 'Add supplement manually'}</h3>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <Field label="Name EN" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <Field label="Name AR" value={form.name_ar} onChange={(e) => setForm({ ...form, name_ar: e.target.value })} />
+          <Field label="Price" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="1800 EGP" />
+          <Field label="Image URL" value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} />
+          <Field label="Category EN" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
+          <Field label="Category AR" value={form.category_ar} onChange={(e) => setForm({ ...form, category_ar: e.target.value })} />
+        </div>
+        <div className="mt-3 grid sm:grid-cols-2 gap-3">
+          <Area label="Description EN" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} />
+          <Area label="Description AR" value={form.description_ar} onChange={(e) => setForm({ ...form, description_ar: e.target.value })} rows={2} />
+        </div>
+        <div className="flex gap-2 mt-3">
+          <Button onClick={saveOne}><span className="inline-flex items-center gap-1.5">{editing ? <><Save size={16} /> Save</> : <><Plus size={16} /> Add supplement</>}</span></Button>
+          {editing && <Button variant="secondary" onClick={() => { setEditing(null); setForm({ name: '', name_ar: '', price: '', category: '', category_ar: '', description: '', description_ar: '', image: '' }) }}>Cancel</Button>}
+        </div>
+      </Card>
+
+      {list.map((s) => (
+        <Card key={s.id} className="flex justify-between items-center gap-3">
+          <div className="text-sm"><b className="text-white">{s.name}</b> <span className="text-rose-400 font-bold">{s.price}</span> <span className="text-stone-400">• {s.category}</span></div>
           <div className="flex gap-2 shrink-0">
-            <button onClick={() => updateProgram(p.id, { popular: !p.popular })} className="text-xs bg-white/10 px-3 py-1.5 rounded-lg inline-flex items-center gap-1.5"><Star size={12} fill={p.popular ? 'currentColor' : 'none'} className="text-amber-400" /> Homepage</button>
-            <button onClick={() => confirm('Delete?') && deleteProgram(p.id)} className="text-xs text-red-400 px-2 py-1.5">Delete</button>
+            <button onClick={() => { setEditing(s.id); setForm({ name: s.name || '', name_ar: s.name_ar || '', price: s.price || '', category: s.category || '', category_ar: s.category_ar || '', description: s.description || '', description_ar: s.description_ar || '', image: s.image || '' }) }} className="text-xs bg-white/10 px-3 py-1.5 rounded-lg">Edit</button>
+            <button onClick={() => confirm('Delete?') && deleteSupplement(s.id)} className="text-xs text-red-400 px-2 py-1.5">Delete</button>
           </div>
         </Card>
       ))}
@@ -291,11 +397,35 @@ function FileStatus() {
   )
 }
 
+function splitList(v) {
+  const lines = String(v ?? '').split(/\r?\n/).map((x) => x.trim()).filter(Boolean)
+  if (lines.length <= 1 && String(v ?? '').includes('|')) {
+    return String(v).split('|').map((x) => x.trim()).filter(Boolean)
+  }
+  return lines
+}
+
+function truthy(v) {
+  return ['true', '1', 'yes', 'y', '✓'].includes(String(v ?? '').trim().toLowerCase())
+}
+
+// Full-site Excel sheets: which sheet name belongs to which collection
+function matchSheet(name) {
+  const n = String(name).toLowerCase()
+  if (/package|باق/.test(n)) return 'packages'
+  if (/transformation|result|نتيج|تحول/.test(n)) return 'transformations'
+  if (/testimonial|review|رأي|اراء|تقييم/.test(n)) return 'testimonials'
+  if (/service|خدم/.test(n)) return 'services'
+  if (/supplement|مكمل/.test(n)) return 'supplements'
+  return null
+}
+
 function SettingsTab() {
   const exportJSON = useSiteStore((s) => s.exportJSON)
   const importJSON = useSiteStore((s) => s.importJSON)
   const resetAll = useSiteStore((s) => s.resetAll)
   const [text, setText] = useState('')
+  const [msg, setMsg] = useState('')
   const download = () => {
     const blob = new Blob([exportJSON()], { type: 'application/json' })
     const a = document.createElement('a')
@@ -303,6 +433,126 @@ function SettingsTab() {
     a.download = 'site.json'
     a.click()
   }
+
+  const onJsonFile = (e) => {
+    const f = e.target.files?.[0]
+    if (!f) return
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        importJSON(JSON.parse(ev.target.result))
+        setMsg(`JSON file "${f.name}" applied — live on the site now.`)
+      } catch {
+        setMsg('That file is not valid JSON.')
+      }
+      e.target.value = ''
+    }
+    reader.readAsText(f)
+  }
+
+  const exportExcel = () => {
+    const s = JSON.parse(useSiteStore.getState().exportJSON())
+    const wb = XLSX.utils.book_new()
+    const add = (name, rows) => XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), name)
+    add('Packages', s.packages.map((p) => ({
+      name: p.name, name_ar: p.name_ar, price: p.price, period: p.period, period_ar: p.period_ar,
+      tag: p.tag, tag_ar: p.tag_ar, features: (p.features || []).join('\n'), features_ar: (p.features_ar || []).join('\n'),
+      whatsappText: p.whatsappText, whatsappText_ar: p.whatsappText_ar, highlight: p.highlight ? 'yes' : '',
+    })))
+    add('Results', s.transformations.map((r) => ({
+      name: r.name, name_ar: r.name_ar, result: r.result, result_ar: r.result_ar,
+      goal: r.goal, goal_ar: r.goal_ar, image: r.image, text: r.text, text_ar: r.text_ar,
+    })))
+    add('Testimonials', s.testimonials.map((t) => ({
+      name: t.name, name_ar: t.name_ar, role: t.role, role_ar: t.role_ar,
+      avatar: t.avatar, text: t.text, text_ar: t.text_ar,
+    })))
+    add('Services', s.services.map((x) => ({
+      title: x.title, title_ar: x.title_ar, desc: x.desc, desc_ar: x.desc_ar, icon: x.icon,
+    })))
+    add('Supplements', s.supplements.map((x) => ({
+      name: x.name, name_ar: x.name_ar, price: x.price, category: x.category, category_ar: x.category_ar,
+      description: x.description, description_ar: x.description_ar, image: x.image,
+    })))
+    XLSX.writeFile(wb, 'site-export.xlsx')
+  }
+
+  const onExcelFile = (e) => {
+    const f = e.target.files?.[0]
+    if (!f) return
+    setMsg('')
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      try {
+        const wb = XLSX.read(ev.target.result, { type: 'array' })
+        const norm = (ws) => XLSX.utils.sheet_to_json(ws, { defval: '' }).map((r) => {
+          const o = {}
+          Object.entries(r).forEach(([k, v]) => { o[String(k).trim().toLowerCase()] = v })
+          return o
+        })
+        const stamp = Date.now().toString(36)
+        let n = 0
+        const pick = (r, ...ks) => rowGet(r, ks)
+        const patch = {}
+        const notes = []
+        wb.SheetNames.forEach((sn) => {
+          const key = matchSheet(sn)
+          if (!key) return
+          const rows = norm(wb.Sheets[sn])
+          if (key === 'packages') {
+            patch.packages = rows.map((r) => ({
+              id: `pkg-xls-${stamp}-${n++}`, name: pick(r, ...SUPP_COLS.name), name_ar: pick(r, ...['name_ar', 'الاسم بالعربية']),
+              price: pick(r, ...SUPP_COLS.price), period: pick(r, 'period', '/month', 'لكل'), period_ar: pick(r, 'period_ar', 'لكل بالعربية'),
+              tag: pick(r, 'tag', 'الوسم'), tag_ar: pick(r, 'tag_ar', 'الوسم بالعربية'),
+              features: splitList(pick(r, 'features', 'المميزات')), features_ar: splitList(pick(r, 'features_ar', 'المميزات بالعربية')),
+              whatsappText: pick(r, 'whatsapptext', 'واتساب'), whatsappText_ar: pick(r, 'whatsapptext_ar', 'واتساب بالعربية'),
+              highlight: truthy(pick(r, 'highlight', 'مميز')),
+            })).filter((x) => x.name)
+          } else if (key === 'transformations') {
+            patch.transformations = rows.map((r) => ({
+              id: `res-xls-${stamp}-${n++}`, name: pick(r, ...SUPP_COLS.name), name_ar: pick(r, ...['name_ar', 'الاسم بالعربية']),
+              result: pick(r, 'result', 'النتيجة'), result_ar: pick(r, 'result_ar', 'النتيجة بالعربية'),
+              goal: pick(r, 'goal', 'الهدف'), goal_ar: pick(r, 'goal_ar', 'الهدف بالعربية'),
+              image: pick(r, ...SUPP_COLS.image), text: pick(r, 'text', 'الوصف'), text_ar: pick(r, 'text_ar', 'الوصف بالعربية'),
+            })).filter((x) => x.name)
+          } else if (key === 'testimonials') {
+            patch.testimonials = rows.map((r) => ({
+              id: `tes-xls-${stamp}-${n++}`, name: pick(r, ...SUPP_COLS.name), name_ar: pick(r, ...['name_ar', 'الاسم بالعربية']),
+              role: pick(r, 'role', 'الدور'), role_ar: pick(r, 'role_ar', 'الدور بالعربية'),
+              avatar: pick(r, 'avatar', 'الصورة'), text: pick(r, 'text', 'النص'), text_ar: pick(r, 'text_ar', 'النص بالعربية'),
+            })).filter((x) => x.name)
+          } else if (key === 'services') {
+            patch.services = rows.map((r) => ({
+              title: pick(r, 'title', 'العنوان'), title_ar: pick(r, 'title_ar', 'العنوان بالعربية'),
+              desc: pick(r, 'desc', 'الوصف'), desc_ar: pick(r, 'desc_ar', 'الوصف بالعربية'),
+              icon: pick(r, 'icon', 'الأيقونة') || 'flame',
+            })).filter((x) => x.title)
+          } else if (key === 'supplements') {
+            patch.supplements = rows.map((r) => ({
+              id: `sup-xls-${stamp}-${n++}`, name: pick(r, ...SUPP_COLS.name), name_ar: pick(r, ...['name_ar', 'الاسم بالعربية']),
+              price: pick(r, ...SUPP_COLS.price), category: pick(r, ...SUPP_COLS.category), category_ar: pick(r, ...['category_ar', 'الفئة بالعربية']),
+              description: pick(r, ...['description', 'الوصف']), description_ar: pick(r, ...['description_ar', 'الوصف بالعربية']),
+              image: pick(r, ...SUPP_COLS.image),
+            })).filter((x) => x.name)
+          }
+          if (patch[key]) notes.push(`${sn}: ${patch[key].length}`)
+        })
+        if (!notes.length) {
+          setMsg('No recognized sheets. Name sheets: Packages, Results, Testimonials, Services, Supplements.')
+          return
+        }
+        if (!confirm(`Apply Excel data?\n${notes.join('\n')}\nSheets missing from the file stay unchanged.`)) return
+        const current = JSON.parse(useSiteStore.getState().exportJSON())
+        useSiteStore.getState().importJSON({ ...current, ...patch })
+        setMsg(`Applied — ${notes.join(' • ')}. Live on the site now.`)
+      } catch {
+        setMsg('Could not read that file. Use .xlsx, .xls or .csv.')
+      }
+      e.target.value = ''
+    }
+    reader.readAsArrayBuffer(f)
+  }
+
   return (
     <div className="space-y-4">
       <FileStatus />
@@ -316,9 +566,26 @@ function SettingsTab() {
         </div>
       </Card>
       <Card>
-        <h3 className="font-display text-xl uppercase mb-2">Import JSON</h3>
-        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={6} placeholder='Paste exported site.json here...' className="w-full px-3 py-2 border border-white/10 rounded-xl bg-stone-950 text-xs font-mono" />
-        <Button className="mt-3" onClick={() => { try { importJSON(JSON.parse(text)); alert('Imported!') } catch { alert('Invalid JSON') } }}><span className="inline-flex items-center gap-1.5"><Upload size={16} /> Import</span></Button>
+        <h3 className="font-display text-xl uppercase mb-1 flex items-center gap-2"><FileSpreadsheet size={20} className="text-rose-400" /> Excel: edit the whole site</h3>
+        <p className="text-xs text-stone-400">Export everything to one <b className="text-white">.xlsx</b> workbook (sheets: Packages, Results, Testimonials, Services, Supplements), edit it in Excel, then upload it back — only the sheets inside get replaced.</p>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <Button onClick={exportExcel}><span className="inline-flex items-center gap-1.5"><Download size={16} /> Export site.xlsx</span></Button>
+          <label className="btn-fire text-white text-sm font-extrabold px-4 py-2.5 rounded-xl cursor-pointer inline-flex items-center gap-1.5">
+            <Upload size={16} /> Upload Excel file
+            <input type="file" accept=".xlsx,.xls,.csv" onChange={onExcelFile} className="hidden" />
+          </label>
+        </div>
+      </Card>
+      <Card>
+        <h3 className="font-display text-xl uppercase mb-1 flex items-center gap-2"><FileJson size={20} className="text-rose-400" /> Import JSON</h3>
+        <p className="text-xs text-stone-400">Upload a <b className="text-white">site.json</b> file or paste its content below.</p>
+        <label className="mt-3 inline-flex items-center gap-1.5 text-sm bg-white/10 border border-white/15 px-4 py-2.5 rounded-xl cursor-pointer font-bold hover:bg-white/20">
+          <Upload size={16} /> Upload JSON file
+          <input type="file" accept=".json,application/json" onChange={onJsonFile} className="hidden" />
+        </label>
+        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={6} placeholder='...or paste exported site.json here' className="w-full mt-3 px-3 py-2 border border-white/10 rounded-xl bg-stone-950 text-xs font-mono" />
+        <Button className="mt-3" onClick={() => { try { importJSON(JSON.parse(text)); setMsg('Pasted JSON applied.'); setText('') } catch { setMsg('That text is not valid JSON.') } }}><span className="inline-flex items-center gap-1.5"><Upload size={16} /> Import pasted JSON</span></Button>
+        {msg && <p className="text-xs text-green-400 font-bold mt-2">{msg}</p>}
       </Card>
     </div>
   )
@@ -334,7 +601,7 @@ export default function AdminDashboard() {
     { key: 'results', label: 'Results', Icon: Trophy },
     { key: 'testimonials', label: 'Reviews', Icon: MessageCircle },
     { key: 'services', label: 'Services', Icon: Zap },
-    { key: 'programs', label: 'Programs', Icon: Dumbbell },
+    { key: 'supplements', label: 'Supplements', Icon: Pill },
     { key: 'settings', label: 'JSON / Save', Icon: Save },
   ]
   return (
@@ -353,7 +620,7 @@ export default function AdminDashboard() {
         {tab === 'results' && <ResultsTab />}
         {tab === 'testimonials' && <TestimonialsTab />}
         {tab === 'services' && <ServicesTab />}
-        {tab === 'programs' && <ProgramsTab />}
+        {tab === 'supplements' && <SupplementsTab />}
         {tab === 'settings' && <SettingsTab />}
       </DashboardLayout>
     </div>
