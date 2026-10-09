@@ -44,9 +44,9 @@ export default function Booking() {
             <h3 className="font-display text-xl uppercase mb-3">{isAR ? '1. اختار باقتك' : '1. Choose your package'}</h3>
             <div className="space-y-3">
               {packages.map((p) => (
-                <motion.button key={p.id} whileHover={{ scale: 1.01 }} onClick={() => setPkgId(p.id)} className={`w-full flex justify-between items-center p-4 rounded-2xl border text-left transition ${pkgId === p.id ? 'border-rose-500 bg-rose-500/10 shadow-fire' : 'border-white/10 hover:border-rose-500/40'}`}>
-                  <div><div className="font-bold text-white">{pick(p, 'name')} <span className="text-[10px] bg-fire-gradient text-white px-2 py-0.5 rounded-full ml-1 inline-flex items-center gap-1"><Flame size={10} /> {pick(p, 'tag')}</span></div><div className="text-xs text-stone-400">{(p.features || []).slice(0, 2).join(' • ')}</div></div>
-                  <div className="font-display text-xl text-fire">{p.price}</div>
+                <motion.button key={p.id} whileHover={{ scale: 1.01 }} onClick={() => setPkgId(p.id)} className={`w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 p-4 rounded-2xl border text-left transition ${pkgId === p.id ? 'border-rose-500 bg-rose-500/10 shadow-fire' : 'border-white/10 hover:border-rose-500/40'}`}>
+                  <div className="min-w-0"><div className="font-bold text-white">{pick(p, 'name')} <span className="text-[10px] bg-fire-gradient text-white px-2 py-0.5 rounded-full ml-1 inline-flex items-center gap-1 whitespace-nowrap"><Flame size={10} /> {pick(p, 'tag')}</span></div><div className="text-xs text-stone-400">{(p.features || []).slice(0, 2).join(' • ')}</div></div>
+                  <div className="font-display text-xl text-fire shrink-0">{p.price}</div>
                 </motion.button>
               ))}
             </div>

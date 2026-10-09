@@ -71,8 +71,8 @@ export default function Results() {
           )}
         </AnimatePresence>
 
-        <div className="mt-10 rounded-3xl p-[2px] bg-fire-gradient shadow-fire-lg">
-          <div className="bg-stone-950 rounded-3xl p-8 grid md:grid-cols-2 gap-6 items-center">
+        <div className="mt-10 rounded-3xl border border-blue-500/25 bg-[#0A1222]">
+          <div className="rounded-3xl p-8 grid md:grid-cols-2 gap-6 items-center">
             <div>
               <h2 className="font-display text-3xl uppercase">{isAR ? <>عايز نتائج <span className="text-fire">زي دي؟</span></> : <>Want results <span className="text-fire">like these?</span></>}</h2>
               <p className="text-stone-400 text-sm mt-2">{isAR ? 'ابعت هدفك + وزنك + مكان التمرين (جيم/بيت) على واتساب وهرد عليك بأحسن باقة ليك.' : 'Send your goal + current weight + training place (gym/home) on WhatsApp and I will reply with the best package for you.'}</p>
@@ -84,7 +84,7 @@ export default function Results() {
         </div>
 
         <h2 className="font-display text-3xl uppercase mt-10 mb-4">{isAR ? <>آراء <span className="text-fire">العملاء</span></> : <>Client <span className="text-fire">Reviews</span></>}</h2>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
           {testimonials.map((titem) => (
             <Card key={titem.id}>
               <div className="flex items-center gap-0.5 text-amber-400">{[0, 1, 2, 3, 4].map((s) => <Star key={s} size={14} fill="currentColor" />)}</div>

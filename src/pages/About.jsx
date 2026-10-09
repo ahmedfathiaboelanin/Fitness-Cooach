@@ -19,8 +19,8 @@ export default function About() {
       <EmberBackground />
       <div className="relative container-x py-10 grid lg:grid-cols-[380px_1fr] gap-6">
         <div>
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="rounded-[1.8rem] p-1.5 bg-fire-gradient shadow-fire-lg">
-            <img src={heroImg || coach.avatar} className="rounded-[1.5rem] w-full h-[460px] object-cover" alt={pick(coach, 'name')} />
+          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="rounded-[1.8rem] border border-blue-500/30 bg-[#0A1222] p-1.5">
+            <img src={heroImg || coach.avatar} className="rounded-[1.5rem] w-full h-72 sm:h-[460px] object-cover" alt={pick(coach, 'name')} />
           </motion.div>
           <Card className="mt-4 text-center">
             <div className="font-display text-2xl uppercase">{pick(coach, 'name')}</div>
@@ -32,7 +32,7 @@ export default function About() {
         <div className="space-y-6">
           <div>
             <span className="text-[11px] font-extrabold tracking-[0.2em] text-rose-400 bg-rose-500/10 border border-rose-500/25 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {t('myStory')}</span>
-            <h1 className="font-display text-5xl mt-3 uppercase">{isAR ? <>أهلاً، أنا <span className="text-fire">{pick(coach, 'firstName')}</span></> : <>Hi, I'm <span className="text-fire">{pick(coach, 'firstName')}</span></>}</h1>
+            <h1 className="font-display text-4xl sm:text-5xl mt-3 uppercase text-balance">{isAR ? <>أهلاً، أنا <span className="text-fire">{pick(coach, 'firstName')}</span></> : <>Hi, I'm <span className="text-fire">{pick(coach, 'firstName')}</span></>}</h1>
             <p className="text-stone-300 mt-3 leading-relaxed">{pick(coach, 'bio')}</p>
             <div className="mt-5"><StatBurst stats={coach.stats} /></div>
           </div>
@@ -44,10 +44,10 @@ export default function About() {
           </Card>
           <Card>
             <h3 className="font-display text-xl uppercase mb-3">{isAR ? 'هنشتغل مع بعض إزاي' : 'How we will work together'}</h3>
-            <div className="grid md:grid-cols-3 gap-3">
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
               {coach.approach.map((a) => (
-                <motion.div key={pick(a, 'title')} whileHover={{ y: -4 }} className="bg-stone-950 border border-rose-500/20 rounded-xl p-4 relative overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-fire-gradient" />
+                <motion.div key={pick(a, 'title')} className="bg-stone-950 border border-rose-500/20 rounded-xl p-4 relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#2E7BFF]" />
                   <b className="text-sm text-rose-300">{pick(a, 'title')}</b><p className="text-xs text-stone-400 mt-1">{pick(a, 'text')}</p>
                 </motion.div>
               ))}

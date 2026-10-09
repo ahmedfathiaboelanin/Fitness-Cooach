@@ -19,11 +19,11 @@ export default function Packages() {
           title={isAR ? <>باقات <span className="text-fire">التدريب</span></> : <>Coaching <span className="text-fire">Packages</span></>}
           subtitle={isAR ? 'أسعار واضحة — احجز بضغطة واحدة على واتساب. بدون دفع أونلاين.' : 'Transparent pricing — book in 1 click on WhatsApp. No payment online.'}
         />
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {packages.map((p, i) => (
-            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} whileHover={{ y: -8 }} className={`rounded-3xl p-6 border relative overflow-hidden ${p.highlight ? 'bg-gradient-to-b from-rose-600/25 to-stone-900 border-rose-500/60 shadow-fire-lg' : 'card-fire'}`}>
-              {p.highlight && <div className="absolute top-0 left-0 right-0 h-1.5 bg-fire-gradient animate-gradient-x bg-[length:200%_100%]" />}
-              <span className="text-[11px] font-extrabold tracking-wider bg-fire-gradient text-white px-3 py-1 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {pick(p, 'tag')}</span>
+            <motion.div key={p.id} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }} className={`rounded-3xl p-6 border relative overflow-hidden ${p.highlight ? 'bg-[#0A1428] border-blue-500/50' : 'card-fire'}`}>
+              {p.highlight && <div className="absolute top-0 left-0 right-0 h-1 bg-[#2E7BFF]" />}
+              <span className="text-[11px] font-extrabold tracking-wider bg-[#2E7BFF] text-white px-3 py-1 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {pick(p, 'tag')}</span>
               <h3 className="font-display text-2xl mt-3 uppercase">{pick(p, 'name')}</h3>
               <div className="my-3"><span className="font-display text-4xl text-fire">{p.price}</span><span className="text-stone-400 text-sm">{pick(p, 'period')}</span></div>
               <ul className="space-y-2 text-sm mb-6 text-stone-300">{pickArr(p, 'features').map((f) => <li key={f} className="flex items-start gap-2"><Check size={16} className="text-rose-400 shrink-0 mt-0.5" /> {f}</li>)}</ul>

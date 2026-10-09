@@ -26,7 +26,7 @@ function Toggles() {
       <button
         onClick={toggleLang}
         title="AR / EN"
-        className="lang-toggle text-xs font-extrabold px-2.5 py-2 rounded-xl bg-fire-gradient text-white shadow-fire transition hover:brightness-110 inline-flex items-center gap-1.5"
+        className=" text-xs font-extrabold px-2.5 py-2 rounded-xl bg-white/10  shadow-fire transition hover:brightness-110 inline-flex items-center gap-1.5"
       >
         <Globe size={15} /> {t('langName')}
       </button>
@@ -202,9 +202,9 @@ export function Navbar() {
     <header className="sticky top-0 z-40 bg-stone-950/85 backdrop-blur-xl border-b border-rose-500/15">
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-fire-gradient" />
       <div className="container-x flex items-center justify-between h-16 gap-2">
-        <Link to="/" className="flex items-center gap-2.5 font-display text-xl uppercase tracking-wide shrink-0">
-          <motion.span animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 2.4, repeat: Infinity }} className="flex"><CoachLogo size={38} /></motion.span>
-          <span className="text-white">{pick(coach, 'name')}</span>
+        <Link to="/" className="flex items-center gap-2.5 font-display text-lg sm:text-xl uppercase tracking-wide shrink-0 min-w-0">
+          <motion.span animate={{ scale: [1, 1.06, 1] }} transition={{ duration: 2.4, repeat: Infinity }} className="flex shrink-0"><CoachLogo size={38} /></motion.span>
+          <span className="text-white truncate">{pick(coach, 'name')}</span>
           {/* <span className="hidden sm:inline text-[10px] font-sans font-extrabold bg-fire-gradient text-white px-2 py-1 rounded-full">GYM • ONLINE</span> */}
         </Link>
         <nav className="hidden md:flex gap-6 items-center">
@@ -230,7 +230,7 @@ export function Footer() {
   return (
     <footer className="bg-stone-950 text-stone-400 mt-0 border-t border-rose-500/15 relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-1 bg-fire-gradient" />
-      <div className="container-x py-12 grid md:grid-cols-4 gap-8 relative">
+      <div className="container-x py-8 sm:py-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 relative">
         <div>
           <div className="flex items-center gap-3 mb-2"><CoachLogo size={46} /><span className="font-display text-white text-xl uppercase">{pick(coach, 'name')}</span></div>
           <p className="text-sm">{pick(coach, 'title')}<br />{pick(coach, 'location')}</p>
@@ -240,7 +240,7 @@ export function Footer() {
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">Coaching</h4><ul className="text-sm space-y-1"><li><Link className="hover:text-rose-400" to="/packages">{t('nav.packages')}</Link></li><li><Link className="hover:text-rose-400" to="/booking">{t('bookNow')}</Link></li><li><Link className="hover:text-rose-400" to="/calculator">{t('nav.calculator')}</Link></li><li><Link className="hover:text-rose-400" to="/contact">{t('nav.contact')}</Link></li></ul></div>
         <div><h4 className="font-extrabold text-white mb-2 text-sm uppercase tracking-wider">No Excuses</h4><p className="font-display text-2xl text-fire uppercase leading-snug">{t('footerTagline')}</p></div>
       </div>
-      <div className="border-t border-white/10 py-4 text-center text-xs flex items-center justify-center gap-1.5">© 2026 {pick(coach, 'name')} — Built with <Flame size={13} className="text-rose-500" />. All rights reserved.</div>
+      <div className="border-t border-white/10 py-4 px-4 text-center text-xs flex flex-wrap items-center justify-center gap-1.5">© 2026 {pick(coach, 'name')} — Built with <Flame size={13} className="text-rose-500" />. All rights reserved.</div>
     </footer>
   )
 }
@@ -257,17 +257,29 @@ export function MainLayout({ children }) {
 }
 
 // Used only by the hidden admin dashboard
-export function DashboardLayout({ children, tabs }) {
+export function DashboardLayout({ children, tabs, activeKey }) {
   return (
-    <div className="container-x py-8 grid lg:grid-cols-[220px_1fr] gap-6">
-      <aside className="card-fire p-4 h-fit space-y-1">
-        {tabs.map((t) => (
-          <button key={t.key || t.to} onClick={t.onClick} className="w-full text-start px-3 py-2 rounded-xl text-sm font-bold text-stone-300 hover:bg-rose-500/10 hover:text-rose-300 flex items-center gap-2">
-            {t.Icon && <t.Icon size={15} />} {t.label}
-          </button>
-        ))}
+    <div className="container-x py-4 sm:py-8 grid lg:grid-cols-[220px_minmax(0,1fr)] gap-4 sm:gap-6">
+      <aside className="card-fire p-2 sm:p-4 h-fit lg:space-y-1 flex lg:block gap-1.5 overflow-x-auto scrollbar-hide lg:overflow-visible lg:sticky lg:top-20">
+        {tabs.map((t) => {
+          const active = activeKey != null ? t.key === activeKey : !!t.active
+          return (
+            <button
+              key={t.key || t.to}
+              onClick={t.onClick}
+              aria-current={active ? 'page' : undefined}
+              className={`shrink-0 whitespace-nowrap lg:w-full text-start px-3 py-2.5 lg:py-2 rounded-xl text-sm font-bold flex items-center gap-2 transition min-h-[44px] ${
+                active
+                  ? 'bg-[#2E7BFF] text-white'
+                  : 'text-stone-300 hover:bg-rose-500/10 hover:text-rose-300'
+              }`}
+            >
+              {t.Icon && <t.Icon size={15} className="shrink-0" />} {t.label}
+            </button>
+          )
+        })}
       </aside>
-      <div>{children}</div>
+      <div className="min-w-0">{children}</div>
     </div>
   )
 }

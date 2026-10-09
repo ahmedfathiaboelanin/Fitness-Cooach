@@ -41,7 +41,7 @@ function Lightbox({ index, setIndex, onClose, caption }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[80] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+      className="lightbox fixed inset-0 z-[80] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
       onClick={onClose}
     >
       <button onClick={onClose} aria-label="Close" className="absolute top-4 end-4 p-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition">
@@ -144,7 +144,7 @@ export function GallerySlider() {
           >
             <img src={p.src} alt={caption(i)} loading="lazy" draggable={false} className="h-72 sm:h-80 w-full object-cover group-hover:scale-105 transition duration-500" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition" />
-            <div className="absolute bottom-3 start-3 end-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition">
+            <div className="absolute bottom-3 start-3 end-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition photo-cap">
               <span className="text-white text-xs font-bold">{caption(i)}</span>
               <span className="p-1.5 rounded-full bg-white/15 text-white"><Expand size={14} /></span>
             </div>

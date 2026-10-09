@@ -76,10 +76,10 @@ export default function Calculator() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            <div><label className="text-sm font-bold text-stone-300">{isAR ? 'السن' : 'Age'}</label><input type="number" min="10" max="100" value={age} onChange={(e) => setAge(e.target.value)} className={`${numCls} mt-1.5`} /></div>
-            <div><label className="text-sm font-bold text-stone-300">{isAR ? 'الطول (سم)' : 'Height (cm)'}</label><input type="number" min="100" max="250" value={height} onChange={(e) => setHeight(e.target.value)} className={`${numCls} mt-1.5`} /></div>
-            <div><label className="text-sm font-bold text-stone-300">{isAR ? 'الوزن (كجم)' : 'Weight (kg)'}</label><input type="number" min="25" max="300" value={weight} onChange={(e) => setWeight(e.target.value)} className={`${numCls} mt-1.5`} /></div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="min-w-0"><label className="text-sm font-bold text-stone-300">{isAR ? 'السن' : 'Age'}</label><input type="number" min="10" max="100" value={age} onChange={(e) => setAge(e.target.value)} className={`${numCls} mt-1.5`} /></div>
+            <div className="min-w-0"><label className="text-sm font-bold text-stone-300">{isAR ? 'الطول (سم)' : 'Height (cm)'}</label><input type="number" min="100" max="250" value={height} onChange={(e) => setHeight(e.target.value)} className={`${numCls} mt-1.5`} /></div>
+            <div className="min-w-0"><label className="text-sm font-bold text-stone-300">{isAR ? 'الوزن (كجم)' : 'Weight (kg)'}</label><input type="number" min="25" max="300" value={weight} onChange={(e) => setWeight(e.target.value)} className={`${numCls} mt-1.5`} /></div>
           </div>
 
           <div>

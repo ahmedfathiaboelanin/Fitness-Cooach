@@ -6,30 +6,37 @@
 
 :root {
   color-scheme: dark;
-  /* chrome-red pulled from the MS logo: bright highlight → rich red → deep burgundy */
-  --fire-orange: #C8102E;
-  --fire-ember: #7A0E1D;
-  --fire-yellow: #FF8A94;
-  --silver: #D8DCE2;
-  /* near-black surfaces to match the logo backdrop */
-  --page-bg: #0C0A0B;
-  --page-ink: #EDE6DA;
-  --muted: #A89C8E;
-  --surface: #171214;
-  --surface-2: #120E10;
-  --line: rgba(216, 220, 226, 0.10);
-  --card-shadow: 0 14px 34px -22px rgba(0, 0, 0, 0.6);
+  /* Electric-blue system pulled from the cover image:
+     deep navy-black surfaces + single vivid blue accent */
+  --accent: #2E7BFF;
+  --accent-hover: #1F68E8;
+  --accent-soft: #5B9CFF;
+  --accent-deep: #0B2E6E;
+  --fire-orange: #2E7BFF;
+  --fire-ember: #0B2E6E;
+  --fire-yellow: #5B9CFF;
+  --silver: #C9D6F2;
+  --page-bg: #04070E;
+  --page-ink: #F2F6FF;
+  --muted: #93A0B8;
+  --surface: #0A1222;
+  --surface-2: #0D1528;
+  --line: rgba(148, 178, 255, 0.12);
+  --card-shadow: 0 14px 34px -22px rgba(0, 0, 0, 0.7);
 }
 
 [data-theme='light'] {
   color-scheme: light;
-  --page-bg: #FAF6EE;
-  --page-ink: #40382E;
-  --muted: #7C7161;
-  --surface: #FFFDF8;
-  --surface-2: #F4EDE0;
-  --line: rgba(120, 90, 50, 0.16);
-  --card-shadow: 0 18px 40px -22px rgba(150, 100, 50, 0.35);
+  --accent: #1450C8;
+  --accent-hover: #0F3FA3;
+  --accent-soft: #2E7BFF;
+  --page-bg: #F4F7FD;
+  --page-ink: #16233B;
+  --muted: #5B6B89;
+  --surface: #FFFFFF;
+  --surface-2: #E9EFFA;
+  --line: rgba(20, 60, 140, 0.14);
+  --card-shadow: 0 18px 40px -22px rgba(20, 60, 140, 0.25);
 }
 
 html {
@@ -64,38 +71,37 @@ body {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-/* Solid chrome-red accent text (no gradient) — theme-aware for readability */
+/* Solid electric-blue accent text (flat, no gradient) */
 .text-fire {
-  color: #FF7A88;
+  color: #5B9CFF;
 }
 [data-theme='light'] .text-fire {
-  color: #A31226;
+  color: #1450C8;
 }
 
-/* Chrome-red button — metallic top sheen like the logo plates */
+/* Flat blue button — solid, calm, no gradients or shine */
 .btn-fire {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 42%),
-    linear-gradient(135deg, var(--fire-yellow) 0%, var(--fire-orange) 55%, var(--fire-ember) 100%);
-  background-size: auto, 180% 180%;
-  box-shadow: 0 8px 22px -12px rgba(200, 16, 46, 0.5), inset 0 1px 0 rgba(255,255,255,0.35);
-  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease;
+  background: var(--accent);
+  box-shadow: 0 8px 20px -12px rgba(46, 123, 255, 0.6);
+  transition: transform .15s ease, filter .2s ease, box-shadow .2s ease, background .2s ease;
 }
 .btn-fire:hover {
-  filter: saturate(1.06);
-  box-shadow: 0 12px 26px -12px rgba(200, 16, 46, 0.55), inset 0 1px 0 rgba(255,255,255,0.4);
+  background: var(--accent-hover);
+  box-shadow: 0 12px 24px -12px rgba(46, 123, 255, 0.65);
 }
 .btn-fire:active { transform: scale(.97); }
 .btn-fire::after {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0; width: 45%;
-  background: linear-gradient(100deg, transparent, rgba(255,255,255,.28), transparent);
-  transform: translateX(-120%) skewX(-15deg);
-  animation: shine 5s ease-in-out infinite;
+  content: none;
+}
+
+/* Any lingering gradient utility becomes a flat blue surface */
+.bg-fire-gradient {
+  background: var(--accent) !important;
+  background-image: none !important;
+}
+.animate-gradient-x {
+  animation: none !important;
+  background-size: auto !important;
 }
 
 /* Calm WhatsApp button — muted green, gentle glow */
@@ -112,19 +118,16 @@ body {
 .btn-wa:active { transform: scale(.97); }
 [data-theme='light'] .btn-wa { color: #fff !important; }
 
-/* Theme-aware card */
+/* Theme-aware card — flat surface, no lift drama */
 .card-fire {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 1rem;
-  backdrop-filter: blur(8px);
   box-shadow: var(--card-shadow);
-  transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease, background .3s ease;
+  transition: border-color .25s ease, box-shadow .25s ease, background .3s ease;
 }
 .card-fire:hover {
-  transform: translateY(-2px);
-  border-color: rgba(200, 16, 46, 0.4);
-  box-shadow: 0 14px 32px -20px rgba(122, 14, 29, 0.45);
+  border-color: rgba(46, 123, 255, 0.35);
 }
 
 .card-light {
@@ -133,24 +136,27 @@ body {
   border-color: var(--line);
 }
 
-/* Ember glow blobs — faint for comfort */
+/* Cool glow blobs — faint blue for comfort (see EmberBackground) */
 .ember-blob {
   position: absolute;
   border-radius: 9999px;
   filter: blur(110px);
-  opacity: 0.2;
+  opacity: 0.12;
   pointer-events: none;
 }
 [data-theme='light'] .ember-blob {
-  opacity: 0.1;
+  opacity: 0.08;
 }
 
-/* Marquee strip — gently desaturated so it doesn't shout */
+/* Marquee strip — flat, calm */
 .marquee-soft {
-  filter: saturate(0.82) brightness(0.98);
+  filter: none;
 }
 
-/* Language toggle — gradient brand chip in dark, calm surface chip in light */
+/* Language toggle — flat blue chip in dark, calm surface chip in light */
+.lang-toggle {
+  background: var(--accent);
+}
 [data-theme='light'] .lang-toggle {
   background: var(--surface);
   color: var(--page-ink);
@@ -159,7 +165,7 @@ body {
 }
 [data-theme='light'] .lang-toggle:hover {
   filter: none;
-  border-color: rgba(200, 16, 46, 0.35);
+  border-color: rgba(20, 80, 200, 0.35);
 }
 
 /* Mobile menu panel — solid theme-aware backdrop so links stay readable */
@@ -178,64 +184,171 @@ body {
   animation: marquee 22s linear infinite;
 }
 
-/* Grid overlay */
+/* Grid overlay — cool blue lines */
 .bg-grid-dark {
-  background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(148,178,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(148,178,255,0.05) 1px, transparent 1px);
   background-size: 44px 44px;
   mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 40%, transparent 75%);
 }
 [data-theme='light'] .bg-grid-dark {
-  background-image: linear-gradient(rgba(120,85,40,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(120,85,40,0.07) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(20,60,140,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(20,60,140,0.07) 1px, transparent 1px);
 }
 
 .chat-scroll::-webkit-scrollbar { width: 6px; }
-.chat-scroll::-webkit-scrollbar-thumb { @apply bg-rose-500/40 rounded-full; }
+.chat-scroll::-webkit-scrollbar-thumb { @apply bg-blue-500/40 rounded-full; }
 
-::selection { background: #C8102E; color: #FFF7ED; }
+::selection { background: #2E7BFF; color: #FFF; }
+
+/* ---------- Rose → Blue remap (dark mode) ---------- */
+/* The markup uses rose-* accents from the old red theme. Remap them to the
+   electric-blue system so every page updates without per-file edits.
+   Red delete buttons (text-red-400) and amber stars are left untouched. */
+.text-rose-400 { color: #5B9CFF !important; }
+.text-rose-300 { color: #9CC0FF !important; }
+.text-rose-500 { color: #2E7BFF !important; }
+.bg-rose-500\/10 { background-color: rgba(46, 123, 255, 0.10) !important; }
+.bg-rose-500\/15 { background-color: rgba(46, 123, 255, 0.14) !important; }
+.bg-rose-500\/5 { background-color: rgba(46, 123, 255, 0.06) !important; }
+.border-rose-500\/15 { border-color: rgba(46, 123, 255, 0.16) !important; }
+.border-rose-500\/20 { border-color: rgba(46, 123, 255, 0.22) !important; }
+.border-rose-500\/25 { border-color: rgba(46, 123, 255, 0.28) !important; }
+.border-rose-500\/30 { border-color: rgba(46, 123, 255, 0.32) !important; }
+.border-rose-500\/40 { border-color: rgba(46, 123, 255, 0.42) !important; }
+.border-rose-500\/50 { border-color: rgba(46, 123, 255, 0.5) !important; }
+.border-rose-500\/60 { border-color: rgba(46, 123, 255, 0.55) !important; }
+.from-rose-600\/25 { --tw-gradient-from: rgba(46, 123, 255, 0.14) !important; }
+.hover\:border-rose-500\/50:hover { border-color: rgba(46, 123, 255, 0.5) !important; }
+.hover\:bg-rose-500\/10:hover { background-color: rgba(46, 123, 255, 0.10) !important; }
+.hover\:text-rose-300:hover { color: #9CC0FF !important; }
+.hover\:text-rose-400:hover { color: #5B9CFF !important; }
+.focus\:ring-rose-500:focus { --tw-ring-color: rgba(46, 123, 255, 0.5) !important; }
+/* solid rose border (booking/calculator selected states) → blue in both modes */
+.border-rose-500 { border-color: rgba(46, 123, 255, 0.55) !important; }
 
 /* ---------- Light-theme mapping for hardcoded dark classes ---------- */
-/* These overrides flip existing dark-first markup to the warm light theme
-   without rewriting every page. */
 [data-theme='light'] .bg-stone-950 { background-color: var(--surface) !important; }
 [data-theme='light'] .bg-stone-900 { background-color: var(--surface-2) !important; }
-[data-theme='light'] .bg-stone-900\/50 { background-color: rgba(244, 237, 224, 0.7) !important; }
-/* NOTE: elements that already carry their own colored background
-   (fire/WhatsApp buttons, gradient chips) keep white text */
-[data-theme='light'] .text-white:not(.btn-fire):not([class*='bg-']) { color: #3B342B !important; }
-[data-theme='light'] .text-stone-100 { color: #40382E !important; }
-[data-theme='light'] .text-stone-200 { color: #4A4237 !important; }
-[data-theme='light'] .text-stone-300 { color: #5C5346 !important; }
+[data-theme='light'] .bg-stone-900\/50 { background-color: rgba(233, 239, 250, 0.7) !important; }
+[data-theme='light'] .text-white:not(.btn-fire):not([class*='bg-']) { color: #16233B !important; }
+[data-theme='light'] .text-stone-100 { color: #16233B !important; }
+[data-theme='light'] .text-stone-200 { color: #24344F !important; }
+[data-theme='light'] .text-stone-300 { color: #3A4C6B !important; }
 [data-theme='light'] .text-stone-400 { color: var(--muted) !important; }
-[data-theme='light'] .text-stone-500 { color: #6B5F4F !important; }
-/* bright dark-mode accents become deep, readable tones on cream */
-[data-theme='light'] .text-rose-400 { color: #A31226 !important; }
-[data-theme='light'] .text-rose-300 { color: #7F1D1D !important; }
+[data-theme='light'] .text-stone-500 { color: #5B6B89 !important; }
+[data-theme='light'] .text-rose-400 { color: #1450C8 !important; }
+[data-theme='light'] .text-rose-300 { color: #0F3FA3 !important; }
 [data-theme='light'] .text-green-400 { color: #15803D !important; }
 [data-theme='light'] .text-amber-300 { color: #92400E !important; }
 [data-theme='light'] .text-amber-400 { color: #B45309 !important; }
-[data-theme='light'] .hover\:text-white:hover:not([class*='bg-']) { color: #3B342B !important; }
-[data-theme='light'] .hover\:text-rose-300:hover { color: #7F1D1D !important; }
+[data-theme='light'] .hover\:text-white:hover:not([class*='bg-']) { color: #16233B !important; }
+[data-theme='light'] .hover\:text-rose-300:hover { color: #0F3FA3 !important; }
 [data-theme='light'] .border-white\/10 { border-color: var(--line) !important; }
 [data-theme='light'] .border-white\/15 { border-color: var(--line) !important; }
 [data-theme='light'] .border-white\/20 { border-color: var(--line) !important; }
 [data-theme='light'] .bg-white\/5 { background-color: rgba(255,255,255,0.6) !important; }
-[data-theme='light'] .bg-white\/10 { background-color: rgba(64, 56, 46, 0.06) !important; }
-[data-theme='light'] header.bg-stone-950\/85 { background-color: rgba(250, 246, 238, 0.88) !important; }
+[data-theme='light'] .bg-white\/10 { background-color: rgba(22, 35, 59, 0.06) !important; }
+[data-theme='light'] header.bg-stone-950\/85 { background-color: rgba(244, 247, 253, 0.88) !important; }
 [data-theme='light'] .from-stone-950\/60,
 [data-theme='light'] .via-stone-950\/85,
-[data-theme='light'] .to-stone-950 { --tw-gradient-from: rgba(250,246,238,0.7); --tw-gradient-to: #FAF6EE; }
-/* package highlight card: keep it light-friendly (soft rose tint, no dark foot) */
-[data-theme='light'] .from-rose-600\/25 { --tw-gradient-from: rgba(217, 83, 106, 0.10) !important; }
+[data-theme='light'] .to-stone-950 { --tw-gradient-from: rgba(244,247,253,0.7); --tw-gradient-to: #F4F7FD; }
+[data-theme='light'] .from-rose-600\/25 { --tw-gradient-from: rgba(46, 123, 255, 0.10) !important; }
 [data-theme='light'] .to-stone-900 { --tw-gradient-to: var(--surface) !important; }
+[data-theme='light'] .hover\:bg-rose-100:hover { background-color: #E3ECFF !important; }
+[data-theme='light'] .hover\:bg-white\/20:hover { background-color: rgba(22, 35, 59, 0.08) !important; }
+[data-theme='light'] .border-rose-500 { border-color: rgba(20, 80, 200, 0.5) !important; }
+
+/* ---------- Light-mode readability fixes ---------- */
+/* Form controls: dark glass inputs become white cards with ink text */
+[data-theme='light'] input:not([type='checkbox']):not([type='radio']),
+[data-theme='light'] select,
+[data-theme='light'] textarea {
+  background-color: #FFFFFF !important;
+  color: #16233B !important;
+  border-color: var(--line) !important;
+}
+[data-theme='light'] input::placeholder,
+[data-theme='light'] textarea::placeholder {
+  color: #8A97B1 !important;
+}
+[data-theme='light'] select option {
+  background-color: #FFFFFF;
+  color: #16233B;
+}
+/* Frosted-glass overlay cards become light glass */
+[data-theme='light'] .bg-stone-950\/80 { background-color: rgba(255, 255, 255, 0.88) !important; }
+/* Hardcoded navy blocks become light surfaces */
+[data-theme='light'] .bg-\[\#0A1222\] { background-color: #FFFFFF !important; }
+[data-theme='light'] .bg-\[\#0A1428\] { background-color: #E8EFFF !important; }
+[data-theme='light'] .bg-\[\#071022\] { background-color: #FFFFFF !important; }
+/* Bright-blue-on-dark accents deepen for light surfaces */
+[data-theme='light'] .text-\[\#9CC0FF\] { color: #1450C8 !important; }
+[data-theme='light'] .text-\[\#5B9CFF\] { color: #1450C8 !important; }
+/* Navbar white "Book" button becomes a blue button */
+[data-theme='light'] header .bg-white { background-color: var(--accent) !important; }
+[data-theme='light'] header .bg-white.text-stone-950 { color: #FFFFFF !important; }
+/* Selected tinted buttons keep readable ink text */
+[data-theme='light'] .bg-rose-500\/10.text-white { color: #0F3FA3 !important; }
+/* Low-contrast dark-mode accents deepen */
+[data-theme='light'] .text-red-400 { color: #DC2626 !important; }
+[data-theme='light'] .text-sky-300 { color: #0284C7 !important; }
+/* Captions sitting directly on photos stay white (see .photo-cap) */
+[data-theme='light'] .photo-cap,
+[data-theme='light'] .photo-cap .text-fire,
+[data-theme='light'] .photo-cap .text-stone-400 {
+  color: #FFFFFF !important;
+}
+/* Code chips stay soft */
+[data-theme='light'] .bg-stone-800 { background-color: #E9EFFA !important; }
+/* Fullscreen gallery stays cinematic dark in both modes */
+[data-theme='light'] .lightbox .bg-white\/10 { background-color: rgba(255, 255, 255, 0.12) !important; }
+[data-theme='light'] .lightbox .hover\:bg-white\/20:hover { background-color: rgba(255, 255, 255, 0.22) !important; }
+[data-theme='light'] .lightbox .text-white { color: #FFFFFF !important; }
+[data-theme='light'] .lightbox .text-white\/80 { color: rgba(255, 255, 255, 0.8) !important; }
+[data-theme='light'] .lightbox .text-stone-400 { color: #93A0B8 !important; }
+[data-theme='light'] .lightbox .hover\:text-white:hover { color: #FFFFFF !important; }
+[data-theme='light'] .lightbox .border-white\/10 { border-color: rgba(255, 255, 255, 0.14) !important; }
 
 /* Softer focus for eyes */
 :focus-visible {
-  outline: 2px solid rgba(200, 16, 46, 0.55);
+  outline: 2px solid rgba(46, 123, 255, 0.55);
   outline-offset: 2px;
   border-radius: 6px;
 }
 
+/* ---------- Responsive foundation ---------- */
+html, body {
+  overflow-x: clip;
+}
+img, video, svg {
+  max-width: 100%;
+}
+/* Long display headings + Arabic titles wrap instead of overflowing */
+.font-display {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+/* Hide scrollbars on horizontal tab rails while keeping swipe */
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+/* Wide admin content (code textareas, long URLs) scrolls inside cards */
+.card-fire {
+  min-width: 0;
+}
+/* Prevent iOS auto-zoom on form focus (needs >=16px inputs) */
+@media (max-width: 640px) {
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track, .btn-fire::after { animation: none !important; }
+  .marquee-track { animation: none !important; }
   * { scroll-behavior: auto !important; }
 }

@@ -580,18 +580,37 @@ export const useSiteStore = create((set, get) => {
 
     /* ---------------- supplements ---------------- */
     setSupplements: async (list) => {
-      // bulk replace (Excel upload): wipe + re-insert remotely
-      setLocal({ supplements: list.map((s, i) => ({ id: s.id ?? uid('sup'), ...s })) })
-      if (!isSupabaseConfigured || !supabase) return
+      // bulk replace (Excel upload): insert new rows first, prune the rest.
+      // If the insert fails the old rows are untouched — an upload can
+      // never leave the table at 0.
+      const clean = list.map((s) => ({ id: s.id ?? uid('sup'), ...s }))
+      const before = get().supplements
+      setLocal({ supplements: clean })
+      if (!isSupabaseConfigured || !supabase) return { ok: true, failures: [] }
       try {
-        await supabase.from('supplements').delete().neq('id', 0)
-        if (list.length) {
-          const { data, error } = await supabase.from('supplements').insert(list.map(supplementToDb)).select()
+        if (clean.length) {
+          const { data, error } = await supabase.from('supplements').insert(clean.map(supplementToDb)).select()
           if (error) throw new Error(error.message)
+          const newIds = (data || []).map((d) => d.id)
+          const { data: existing, error: e2 } = await supabase.from('supplements').select('id')
+          if (e2) throw new Error(e2.message)
+          const stale = (existing || []).map((r) => r.id).filter((id) => !newIds.includes(id))
+          if (stale.length) {
+            const { error: e3 } = await supabase.from('supplements').delete().in('id', stale)
+            if (e3) throw new Error(e3.message)
+          }
           setLocal({ supplements: (data || []).map(normSupplement) })
+        } else {
+          const { error } = await supabase.from('supplements').delete().neq('id', 0)
+          if (error) throw new Error(error.message)
         }
+        set({ supabaseError: null })
+        return { ok: true, failures: [] }
       } catch (e) {
-        set({ supabaseError: String((e && e.message) || e) })
+        setLocal({ supplements: before })
+        const msg = `supplements: ${String((e && e.message) || e)}`
+        set({ supabaseError: msg })
+        return { ok: false, failures: [msg] }
       }
     },
     addSupplement: async (s) => {
@@ -634,26 +653,56 @@ export const useSiteStore = create((set, get) => {
         services: obj.services || [],
         supplements: obj.supplements || [],
       }
+      const before = snapshot(get())
       setLocal(next)
       // push everything to Supabase (best effort, keeps working offline)
-      if (!isSupabaseConfigured || !supabase) return
-      try {
-        for (const t of ['packages', 'transformations', 'testimonials', 'services', 'supplements']) {
-          await supabase.from(t).delete().neq('id', 0)
+      if (!isSupabaseConfigured || !supabase) return { ok: true, failures: [] }
+      const failures = []
+      // Insert-first, prune-stale-second: if an insert fails the old rows
+      // are still in the table, so an upload can never zero out data.
+      // A failed table is rolled back locally to the pre-import copy.
+      const syncTable = async (table, rows, toDb) => {
+        try {
+          if (rows.length) {
+            const { data, error } = await supabase.from(table).insert(rows.map(toDb)).select()
+            if (error) throw new Error(error.message)
+            const newIds = (data || []).map((d) => d.id)
+            const { data: existing, error: e2 } = await supabase.from(table).select('id')
+            if (e2) throw new Error(e2.message)
+            const stale = (existing || []).map((r) => r.id).filter((id) => !newIds.includes(id))
+            if (stale.length) {
+              const { error: e3 } = await supabase.from(table).delete().in('id', stale)
+              if (e3) throw new Error(e3.message)
+            }
+          } else {
+            // explicit empty list = intentional clear
+            const { error } = await supabase.from(table).delete().neq('id', 0)
+            if (error) throw new Error(error.message)
+          }
+        } catch (e) {
+          failures.push(`${table}: ${String((e && e.message) || e)}`)
+          setLocal({ [table]: before[table] })
         }
-        if (next.packages.length) await supabase.from('packages').insert(next.packages.map(packageToDb))
-        if (next.transformations.length) await supabase.from('transformations').insert(next.transformations.map(transformationToDb))
-        if (next.testimonials.length) await supabase.from('testimonials').insert(next.testimonials.map(testimonialToDb))
-        if (next.services.length) await supabase.from('services').insert(next.services.map(serviceToDb))
-        if (next.supplements.length) await supabase.from('supplements').insert(next.supplements.map(supplementToDb))
+      }
+      await syncTable('packages', next.packages, packageToDb)
+      await syncTable('transformations', next.transformations, transformationToDb)
+      await syncTable('testimonials', next.testimonials, testimonialToDb)
+      await syncTable('services', next.services, serviceToDb)
+      await syncTable('supplements', next.supplements, supplementToDb)
+      try {
         const prev = get().coach
         if (prev?.id != null && typeof prev.id !== 'string') {
-          await supabase.from('coach').update(coachToDb(next.coach)).eq('id', prev.id)
+          const { error } = await supabase.from('coach').update(coachToDb(next.coach)).eq('id', prev.id)
+          if (error) throw new Error(`coach: ${error.message}`)
         }
-        await get().refresh()
       } catch (e) {
-        set({ supabaseError: String((e && e.message) || e) })
+        failures.push(String((e && e.message) || e))
+        setLocal({ coach: before.coach })
       }
+      await get().refresh()
+      if (failures.length) set({ supabaseError: failures.join(' • ') })
+      else set({ supabaseError: null })
+      return { ok: failures.length === 0, failures }
     },
 
     resetAll: async () => {

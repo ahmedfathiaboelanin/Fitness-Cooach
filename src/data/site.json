@@ -1,5 +1,6 @@
 {
   "coach": {
+    "id": 3,
     "name": "Mohammad Elsum",
     "name_ar": "محمد الصم",
     "firstName": "Mohammad",
@@ -89,7 +90,7 @@
   },
   "packages": [
     {
-      "id": "pkg-xls-muf15fp9-0",
+      "id": "pkg-xls-mv1h6a60-14",
       "name": "Online Coaching",
       "name_ar": "التدريب الأونلاين",
       "price": "1500 EGP",
@@ -116,7 +117,7 @@
       "highlight": true
     },
     {
-      "id": "pkg-xls-muf15fp9-1",
+      "id": "pkg-xls-mv1h6a60-15",
       "name": "1-1 Gym Sessions",
       "name_ar": "تمارين برايفت في الجيم",
       "price": "250 EGP",
@@ -143,7 +144,7 @@
       "highlight": false
     },
     {
-      "id": "pkg-xls-muf15fp9-2",
+      "id": "pkg-xls-mv1h6a60-16",
       "name": "Hybrid Transformation",
       "name_ar": "التحول الشامل",
       "price": "4000 EGP",
@@ -172,7 +173,7 @@
   ],
   "transformations": [
     {
-      "id": "res-xls-muf15fp9-3",
+      "id": "res-xls-mv1h6a60-18",
       "name": "Ahmed — Fat Loss",
       "name_ar": "أحمد — تخسيس",
       "result": "-14 kg in 16 weeks",
@@ -184,7 +185,7 @@
       "text_ar": "تدريب أونلاين + خطوات يومية. بدون دايت قاسي، بس استمرارية."
     },
     {
-      "id": "res-xls-muf15fp9-4",
+      "id": "res-xls-mv1h6a60-19",
       "name": "Omar — Muscle Gain",
       "name_ar": "عمر — زيادة عضلات",
       "result": "+6 kg lean muscle",
@@ -196,7 +197,7 @@
       "text_ar": "جدول ضخامة 4 أيام مع زيادة تدريجية ومتابعة تغذية."
     },
     {
-      "id": "res-xls-muf15fp9-5",
+      "id": "res-xls-mv1h6a60-20",
       "name": "Youssef — Strength",
       "name_ar": "يوسف — قوة",
       "result": "100 → 140 kg squat",
@@ -210,7 +211,7 @@
   ],
   "testimonials": [
     {
-      "id": "tes-xls-muf15fp9-6",
+      "id": 18,
       "name": "Ahmed R.",
       "name_ar": "أحمد ر.",
       "role": "Online Client — Lost 14kg",
@@ -220,7 +221,7 @@
       "text_ar": "محمد غيّر كل حاجة. خطة واضحة ومتابعة أسبوعية على واتساب، وأخيراً انتظمت."
     },
     {
-      "id": "tes-xls-muf15fp9-7",
+      "id": 19,
       "name": "Karim S.",
       "name_ar": "كريم س.",
       "role": "Gym Client — +6kg muscle",
@@ -230,18 +231,19 @@
       "text_ar": "التمرين مع محمد في الجيم مستوى تاني. تكنيك وشدة وتركيز. يستاهل كل جنيه."
     },
     {
-      "id": "tes-xls-muf15fp9-8",
-      "name": "Nour A.",
-      "name_ar": "نور أ.",
+      "id": 20,
+      "name": "Mohammad A.",
+      "name_ar": "محمد أ.",
       "role": "Hybrid — 12 weeks",
       "role_ar": "هجين — 12 أسبوع",
-      "avatar": "https://i.pravatar.cc/100?img=32",
+      "avatar": "https://i.pravatar.cc/100?img=12",
       "text": "I was scared of the gym as a beginner. He made it simple and I got stronger every single week.",
       "text_ar": "كنت خايفة من الجيم كمبتدئة. هو بسّط كل حاجة وبقيت أقوى كل أسبوع."
     }
   ],
   "services": [
     {
+      "id": 22,
       "title": "Gym Personal Training",
       "title_ar": "تدريب شخصي في الجيم",
       "desc": "1-1 sessions with full attention on form, intensity and progression.",
@@ -249,6 +251,7 @@
       "icon": "🏋️"
     },
     {
+      "id": 23,
       "title": "Online Coaching",
       "title_ar": "تدريب أونلاين",
       "desc": "Train anywhere. Custom plan + nutrition + weekly WhatsApp check-ins.",
@@ -256,6 +259,7 @@
       "icon": "💻"
     },
     {
+      "id": 24,
       "title": "Nutrition Guidance",
       "title_ar": "إرشاد غذائي",
       "desc": "Realistic eating structure for fat loss or muscle gain — no starvation.",
@@ -263,6 +267,7 @@
       "icon": "🥗"
     },
     {
+      "id": 25,
       "title": "Technique Review",
       "title_ar": "مراجعة التكنيك",
       "desc": "Send videos on WhatsApp, get detailed form corrections.",
@@ -272,7 +277,7 @@
   ],
   "supplements": [
     {
-      "id": "sup-xls-muf15fp9-9",
+      "id": 22,
       "name": "Whey Protein 2kg",
       "name_ar": "واي بروتين 2 كجم",
       "price": "2400 EGP",
@@ -283,7 +288,7 @@
       "image": "https://images.unsplash.com/photo-1593095948071-474c5cc2989d?w=600&q=80"
     },
     {
-      "id": "sup-xls-muf15fp9-10",
+      "id": 23,
       "name": "Creatine Monohydrate",
       "name_ar": "كرياتين مونوهيدرات",
       "price": "900 EGP",
@@ -294,7 +299,7 @@
       "image": "https://images.unsplash.com/photo-1579722821273-0f6c7d44362f?w=600&q=80"
     },
     {
-      "id": "sup-xls-muf15fp9-11",
+      "id": 24,
       "name": "Pre-Workout Ignite",
       "name_ar": "بري ورك آوت",
       "price": "1200 EGP",
@@ -305,7 +310,7 @@
       "image": "https://images.unsplash.com/photo-1546484959-fed7a4a6f0cf?w=600&q=80"
     },
     {
-      "id": "sup-xls-muf15fp9-12",
+      "id": 25,
       "name": "Omega-3 Fish Oil",
       "name_ar": "أوميجا 3",
       "price": "650 EGP",

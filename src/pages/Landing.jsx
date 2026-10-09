@@ -31,30 +31,30 @@ export default function Landing() {
         <img src={coach.avatar} className="absolute inset-0 w-full h-full object-cover opacity-20" alt="" />
         <div className="absolute inset-0 bg-gradient-to-b from-stone-950/60 via-stone-950/85 to-stone-950" />
         <EmberBackground />
-        <div className="relative container-x py-14 md:py-24 grid md:grid-cols-2 gap-10 items-center">
-          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <motion.span animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity }} className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.22em] text-stone-200 bg-rose-500/10 border border-rose-500/30 px-4 py-2 rounded-full">
-              <Flame size={13} /> {t('heroBadge')}
-            </motion.span>
-            <h1 className="font-display text-5xl md:text-7xl mt-5 uppercase leading-[1.05]">
+        <div className="relative container-x py-10 sm:py-14 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+          <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="min-w-0">
+            <span className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.22em] text-stone-200 bg-rose-500/10 border border-rose-500/30 px-4 py-2 rounded-full max-w-full">
+              <Flame size={13} className="shrink-0" /> <span className="truncate">{t('heroBadge')}</span>
+            </span>
+            <h1 className="font-display text-4xl sm:text-5xl md:text-7xl mt-5 uppercase leading-[1.05] text-balance">
               {pick(coach, 'name')}
-              <span className="block text-fire text-2xl md:text-4xl mt-3 leading-snug">{pick(coach, 'tagline')}</span>
+              <span className="block text-fire text-xl sm:text-2xl md:text-4xl mt-3 leading-snug">{pick(coach, 'tagline')}</span>
             </h1>
             <p className="text-stone-300 mt-5 max-w-md leading-relaxed">{pick(coach, 'bio')}</p>
-            <div className="flex flex-wrap gap-3 mt-7">
-              <WhatsAppButton large text={waStart} label={t('startWhatsapp')} />
-              <Link to="/results" className="px-8 py-4 rounded-xl font-extrabold bg-white/10 border border-white/20 hover:bg-white/20 hover:border-rose-500/50 backdrop-blur transition inline-flex items-center gap-2">{t('seeWork')} <ArrowRight size={18} className="rtl:rotate-180" /></Link>
+            <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mt-7">
+              <WhatsAppButton large text={waStart} label={t('startWhatsapp')} className="w-full sm:w-auto" />
+              <Link to="/results" className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl font-extrabold bg-white/10 border border-white/20 hover:bg-white/20 hover:border-rose-500/50 backdrop-blur transition inline-flex items-center justify-center gap-2 w-full sm:w-auto text-center">{t('seeWork')} <ArrowRight size={18} className="rtl:rotate-180 shrink-0" /></Link>
             </div>
             <div className="mt-8"><StatBurst stats={coach.stats} /></div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, scale: 0.94, rotate: 1 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.7 }} className="relative hidden md:block">
-            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }} className="relative rounded-[2rem] p-2 bg-gradient-to-br from-[#FF7A88] via-[#C8102E] to-[#42060D] shadow-fire-lg">
+          <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} className="relative hidden md:block">
+            <div className="relative rounded-[2rem] border border-blue-500/30 bg-[#0A1222] p-2">
               <img src={heroImg || coach.avatar} className="rounded-[1.6rem] h-[480px] w-full object-cover" alt={pick(coach, 'name')} />
               <div className="absolute bottom-6 left-6 right-6 bg-stone-950/80 backdrop-blur-xl border border-rose-500/25 rounded-2xl p-4 flex justify-between items-center">
                 <div><div className="font-display text-lg uppercase flex items-center gap-2"><CoachLogo size={26} /> {pick(coach, 'name')}</div><div className="text-xs text-stone-400">{pick(coach, 'title')}</div></div>
-                <a href={waLink('Hi Mohammad!')} target="_blank" rel="noreferrer" className="text-xs font-extrabold text-green-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400 animate-flicker" /> {isAR ? 'متاح الآن' : 'Available now'}</a>
+                <a href={waLink('Hi Mohammad!')} target="_blank" rel="noreferrer" className="text-xs font-extrabold text-green-400 flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400" /> {isAR ? 'متاح الآن' : 'Available now'}</a>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -71,9 +71,9 @@ export default function Landing() {
           {services.map((s, i) => {
             const Icon = SERVICE_ICONS[s.icon] || Flame
             return (
-            <motion.div key={pick(s, 'title') + i} {...fadeUp} transition={{ delay: i * 0.07 }} whileHover={{ y: -6, rotate: -0.5 }} className="card-fire p-6 relative overflow-hidden group">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-fire-gradient opacity-0 group-hover:opacity-100 transition" />
-              <motion.div animate={{ scale: [1, 1.12, 1] }} transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.3 }} className="text-rose-400"><Icon size={36} /></motion.div>
+            <motion.div key={pick(s, 'title') + i} {...fadeUp} transition={{ delay: i * 0.07 }} className="card-fire p-6 relative overflow-hidden group">
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#2E7BFF] opacity-0 group-hover:opacity-100 transition" />
+              <div className="text-rose-400"><Icon size={36} /></div>
               <h3 className="font-display text-xl mt-3 uppercase">{pick(s, 'title')}</h3>
               <p className="text-sm text-stone-400 mt-1">{pick(s, 'desc')}</p>
             </motion.div>
@@ -97,7 +97,7 @@ export default function Landing() {
                   <img src={tinfo.image} className="h-52 w-full object-cover group-hover:scale-110 transition duration-700" alt={pick(tinfo, 'name')} />
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/20 to-transparent" />
                   <span className="absolute top-3 left-3"><Badge>{pick(tinfo, 'goal')}</Badge></span>
-                  <div className="absolute bottom-3 left-3 right-3"><b className="text-sm text-white">{pick(tinfo, 'name')}</b><div className="font-display text-lg text-fire uppercase">{pick(tinfo, 'result')}</div></div>
+                  <div className="absolute bottom-3 left-3 right-3 photo-cap"><b className="text-sm text-white">{pick(tinfo, 'name')}</b><div className="font-display text-lg text-fire uppercase">{pick(tinfo, 'result')}</div></div>
                 </div>
                 <p className="text-xs text-stone-400 p-4">{pick(tinfo, 'text')}</p>
               </motion.div>
@@ -130,8 +130,8 @@ export default function Landing() {
           ))}
         </div>
         <div className="text-center mt-7"><Link to="/supplements" className="btn-fire inline-flex items-center gap-2 px-6 py-3 rounded-xl font-extrabold text-white">{isAR ? 'تصفح المكملات' : 'Shop supplements'} <ArrowRight size={18} className="rtl:rotate-180" /></Link></div>
-        <motion.div {...fadeUp} className="mt-8 rounded-3xl p-[2px] bg-fire-gradient shadow-fire-lg">
-          <div className="bg-stone-950 rounded-3xl p-6 flex flex-col md:flex-row items-center gap-4 justify-between">
+        <motion.div {...fadeUp} className="mt-8 rounded-3xl border border-blue-500/25 bg-[#0A1222]">
+          <div className="rounded-3xl p-6 flex flex-col md:flex-row items-center gap-4 justify-between text-center md:text-start">
             <div>
               <h3 className="font-display text-2xl uppercase">{isAR ? <>مش عارف تاكل <span className="text-fire">قد إيه؟</span></> : <>Not sure how much <span className="text-fire">to eat?</span></>}</h3>
               <p className="text-sm text-stone-400">{isAR ? 'احسب سعراتك (BMR) في دقيقة وابعتها لمحمد على واتساب.' : 'Calculate your BMR calories in a minute and send them to Mohammad.'}</p>
@@ -147,11 +147,11 @@ export default function Landing() {
           title={isAR ? <>باقات <span className="text-fire">التدريب</span></> : <>Coaching <span className="text-fire">Packages</span></>}
           subtitle={isAR ? 'اختار باقة واحجز من واتساب مباشرة — بدون دفع أونلاين.' : 'Pick a package and book directly on WhatsApp — no payment online.'}
         />
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           {packages.map((p, i) => (
-            <motion.div key={p.id} {...fadeUp} transition={{ delay: i * 0.08 }} whileHover={{ y: -8 }} className={`rounded-3xl p-6 border relative overflow-hidden ${p.highlight ? 'bg-gradient-to-b from-rose-600/25 to-stone-900 border-rose-500/60 shadow-fire-lg' : 'card-fire'}`}>
-              {p.highlight && <div className="absolute top-0 left-0 right-0 h-1.5 bg-fire-gradient" />}
-              <span className="text-[11px] font-extrabold tracking-wider bg-fire-gradient text-white px-3 py-1 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {pick(p, 'tag')}</span>
+            <motion.div key={p.id} {...fadeUp} transition={{ delay: i * 0.08 }} className={`rounded-3xl p-6 border relative overflow-hidden ${p.highlight ? 'bg-[#0A1428] border-blue-500/50' : 'card-fire'}`}>
+              {p.highlight && <div className="absolute top-0 left-0 right-0 h-1 bg-[#2E7BFF]" />}
+              <span className="text-[11px] font-extrabold tracking-wider bg-[#2E7BFF] text-white px-3 py-1 rounded-full inline-flex items-center gap-1.5"><Flame size={12} /> {pick(p, 'tag')}</span>
               <h3 className="font-display text-2xl mt-3 uppercase">{pick(p, 'name')}</h3>
               <div className="my-3"><span className="font-display text-4xl text-fire">{p.price}</span><span className="text-stone-400 text-sm">{pick(p, 'period')}</span></div>
               <ul className="space-y-2 text-sm mb-6 text-stone-300">{pickArr(p, 'features').map((f) => <li key={f} className="flex items-start gap-2"><Check size={16} className="text-rose-400 shrink-0 mt-0.5" /> {f}</li>)}</ul>
@@ -170,7 +170,7 @@ export default function Landing() {
             title={isAR ? <>آراء <span className="text-fire">العملاء</span></> : <>What Clients <span className="text-fire">Say</span></>}
             subtitle={isAR ? 'تقييمات واتساب من تدريب حقيقي.' : 'WhatsApp reviews from real coaching.'}
           />
-          <div className="grid md:grid-cols-3 gap-5">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-5">
             {testimonials.map((titem, i) => (
               <motion.div key={titem.id} {...fadeUp} transition={{ delay: i * 0.08 }} className="card-fire p-6">
                 <div className="flex items-center gap-0.5 text-amber-400">{[0, 1, 2, 3, 4].map((s) => <Star key={s} size={14} fill="currentColor" />)}</div>

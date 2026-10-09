@@ -19,13 +19,13 @@ export function Button({ children, variant = 'primary', className = '', ...props
 
 export function Badge({ children, color = 'fire' }) {
   const map = {
-    fire: 'bg-gradient-to-r from-[#FF7A88] to-[#C8102E] text-white shadow-fire',
+    fire: 'bg-[#2E7BFF] text-white',
     green: 'bg-green-500/15 text-green-300 border border-green-500/30',
     amber: 'bg-amber-500/15 text-amber-300 border border-amber-500/30',
     slate: 'bg-white/10 text-stone-300 border border-white/10',
     red: 'bg-red-500/15 text-red-300 border border-red-500/30',
-    coal: 'bg-stone-950 text-rose-400 border border-rose-500/30',
-  }
+    coal: 'bg-stone-950 text-[#5B9CFF] border border-blue-500/30',
+  };
   return <span className={`text-[11px] uppercase tracking-wider font-extrabold px-2.5 py-1 rounded-full ${map[color]}`}>{children}</span>
 }
 
@@ -51,9 +51,9 @@ export function SectionTitle({ title, subtitle, center, eyebrow = 'MOHAMMAD ELSU
       viewport={{ once: true, margin: '-60px' }}
       className={`${center ? 'text-center' : ''} mb-8 ${className}`}
     >
-      <span className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.2em] text-rose-400 bg-rose-500/10 border border-rose-500/25 px-3 py-1.5 rounded-full"><Flame size={12} />{eyebrow}</span>
-      <h2 className="font-display text-4xl md:text-5xl mt-3 uppercase leading-[1.05]">{title}</h2>
-      <div className={`h-1.5 w-24 mt-4 rounded-full bg-fire-gradient ${center ? 'mx-auto' : ''}`} />
+      <span className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.2em] text-[#5B9CFF] bg-blue-500/10 border border-blue-500/25 px-3 py-1.5 rounded-full"><Flame size={12} />{eyebrow}</span>
+      <h2 className="font-display text-3xl sm:text-4xl md:text-5xl mt-3 uppercase leading-[1.08] text-balance">{title}</h2>
+      <div className={`h-1 w-20 mt-4 rounded-full bg-[#2E7BFF] ${center ? 'mx-auto' : ''}`} />
       {subtitle && <p className="text-stone-400 mt-3 max-w-2xl ${center ? 'mx-auto' : ''}">{subtitle}</p>}
     </motion.div>
   )
@@ -81,7 +81,7 @@ export function Modal({ open, onClose, children }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ scale: 0.92, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} className="relative bg-stone-900 border border-rose-500/20 rounded-2xl p-6 max-w-md w-full shadow-fire-lg">
+      <motion.div initial={{ scale: 0.92, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} className="relative bg-stone-900 border border-blue-500/25 rounded-2xl p-6 max-w-md w-full shadow-fire-lg">
         <button onClick={onClose} className="absolute top-4 right-4 text-stone-400 hover:text-white"><X size={18} /></button>
         {children}
       </motion.div>

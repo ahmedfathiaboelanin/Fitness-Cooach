@@ -55,4 +55,26 @@ if (fail) {
   console.log('\n👉 Fix: paste supabase.sql into Supabase Dashboard -> SQL Editor -> Run.')
   process.exit(1)
 }
+
+// Admin login readiness (read-only probe with a dummy hash — never a real password)
+try {
+  const { data, error } = await sb.rpc('verify_admin', {
+    p_username: 'admin',
+    p_password_hash: '0'.repeat(64),
+  })
+  if (error) {
+    const msg = String(error.message || '').toLowerCase()
+    if (error.code === 'PGRST202' || msg.includes('not found') || msg.includes('schema cache')) {
+      console.log('  ⚠️ admin login NOT migrated — re-run supabase.sql (verify_admin missing), then log in with admin / elsum123')
+    } else {
+      console.log(`  ⚠️ admin login check: ${error.message}`)
+    }
+  } else if (data === false) {
+    console.log('  ✅ admin login ready (verify_admin alive)')
+  } else {
+    console.log('  ⚠️ admin login returned unexpected result — re-check supabase.sql functions')
+  }
+} catch (e) {
+  console.log(`  ⚠️ admin login check skipped (${e.message})`)
+}
 console.log('\n✅ Connection OK')

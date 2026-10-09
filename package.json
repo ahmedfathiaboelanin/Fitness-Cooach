@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "seed": "node scripts/seed.mjs",
-    "seed:check": "node scripts/check.mjs"
+    "seed:check": "node scripts/check.mjs",
+    "test:sheets": "node scripts/test-sheets.mjs",
+    "admin": "node scripts/admin.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",

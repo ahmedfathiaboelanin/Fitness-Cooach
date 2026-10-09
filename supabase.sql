@@ -288,3 +288,76 @@ CREATE INDEX IF NOT EXISTS transformations_created_idx ON public.transformations
 CREATE INDEX IF NOT EXISTS testimonials_created_idx   ON public.testimonials (created_at);
 CREATE INDEX IF NOT EXISTS services_created_idx       ON public.services (created_at);
 CREATE INDEX IF NOT EXISTS supplements_created_idx    ON public.supplements (created_at);
+
+-- ============================================================
+-- ADMIN AUTH (dashboard login + change password)
+-- Passwords are stored as SHA-256 hex (64 chars), hashed in the
+-- browser — the server never sees plaintext. Login and password
+-- changes go through SECURITY DEFINER functions, so the users
+-- table itself is locked down (no public read/write policies).
+-- Re-running this block is safe: it never resets an existing
+-- admin password (ON CONFLICT DO NOTHING below).
+-- ============================================================
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+-- Lock the users table: only the RPC functions below may touch it.
+DROP POLICY IF EXISTS "Public read" ON public.users;
+DROP POLICY IF EXISTS "Public write" ON public.users;
+
+-- Verify admin credentials. Returns true only for is_admin accounts.
+CREATE OR REPLACE FUNCTION public.verify_admin(p_username text, p_password_hash text)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.users
+    WHERE username = p_username
+      AND password = p_password_hash
+      AND is_admin = true
+  );
+$$;
+
+-- Change an admin password (verifies the old hash first).
+-- Returns true on success, false when the old password is wrong.
+CREATE OR REPLACE FUNCTION public.change_admin_password(p_username text, p_old_hash text, p_new_hash text)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  -- new value must look like a SHA-256 hex digest (never plaintext)
+  IF p_new_hash IS NULL OR p_new_hash !~ '^[0-9a-f]{64}$' THEN
+    RETURN false;
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM public.users
+    WHERE username = p_username
+      AND password = p_old_hash
+      AND is_admin = true
+  ) THEN
+    RETURN false;
+  END IF;
+  UPDATE public.users SET password = p_new_hash WHERE username = p_username;
+  RETURN true;
+END;
+$$;
+
+-- The dashboard login calls these with the publishable (anon) key.
+GRANT EXECUTE ON FUNCTION public.verify_admin(text, text) TO anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.change_admin_password(text, text, text) TO anon, authenticated;
+
+-- Default admin (username: admin / password: elsum123).
+-- DO NOTHING on conflict: re-running this file never overwrites
+-- a password you changed from the dashboard.
+INSERT INTO public.users (name, username, password, email, is_admin)
+VALUES (
+  'Site Admin',
+  'admin',
+  encode(digest('elsum123', 'sha256'), 'hex'),
+  'admin@example.com',
+  true
+)
+ON CONFLICT (username) DO NOTHING;
