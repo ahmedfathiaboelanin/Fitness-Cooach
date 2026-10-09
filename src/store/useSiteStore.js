@@ -1,25 +1,208 @@
 import { create } from 'zustand'
 import siteDefaults from '../data/site.json'
+import { supabase, isSupabaseConfigured } from '../utils/supabase'
 
 const STORAGE_KEY = 'elsum-site-v3'
-const FILE_API = '/api/site' // served by vite.config dev middleware (`npm run dev` only)
+const FILE_API = '/api/site' // dev-only file API (vite.config) — kept as offline fallback
 
-function loadInitial() {
+/* ------------------------------------------------------------------ */
+/* Normalizers: DB rows -> UI shape (tolerant of old + new schemas)    */
+/* ------------------------------------------------------------------ */
+
+function toArray(v, fallback = []) {
+  if (Array.isArray(v)) return v
+  if (v == null || v === '') return fallback
+  if (typeof v === 'string') {
+    const t = v.trim()
+    // old TEXT column sometimes holds a stringified JSON array
+    if (t.startsWith('[')) {
+      try {
+        const parsed = JSON.parse(t)
+        if (Array.isArray(parsed)) return parsed
+      } catch { /* fall through */ }
+    }
+    // newline- or comma-separated plain text
+    if (t.includes('\n')) return t.split('\n').map((x) => x.trim()).filter(Boolean)
+    if (t.includes('|')) return t.split('|').map((x) => x.trim()).filter(Boolean)
+    return [t]
+  }
+  return fallback
+}
+
+const toStr = (v, fb = '') => (v == null ? fb : String(v))
+const toBool = (v) => v === true || v === 'true' || v === 1 || v === '1'
+const toPrice = (v) => (v == null || v === '' ? '' : String(v)) // TEXT in new schema, numeric in old
+
+function normCoach(r) {
+  if (!r) return { ...siteDefaults.coach }
+  return {
+    id: r.id,
+    name: toStr(r.name), name_ar: toStr(r.name_ar),
+    firstName: toStr(r.firstName), firstName_ar: toStr(r.firstName_ar),
+    title: toStr(r.title), title_ar: toStr(r.title_ar),
+    tagline: toStr(r.tagline), tagline_ar: toStr(r.tagline_ar),
+    location: toStr(r.location), location_ar: toStr(r.location_ar),
+    avatar: toStr(r.avatar), cover: toStr(r.cover),
+    bio: toStr(r.bio), bio_ar: toStr(r.bio_ar),
+    whatsappNumber: toStr(r.whatsappNumber), whatsappDisplay: toStr(r.whatsappDisplay),
+    stats: toArray(r.stats),
+    certifications: toArray(r.certifications),
+    certifications_ar: toArray(r.certifications_ar),
+    specializations: toArray(r.specializations),
+    specializations_ar: toArray(r.specializations_ar),
+    approach: toArray(r.approach),
+  }
+}
+
+function normPackage(r) {
+  return {
+    id: r.id,
+    name: toStr(r.name), name_ar: toStr(r.name_ar),
+    price: toPrice(r.price),
+    period: toStr(r.period, '/month'), period_ar: toStr(r.period_ar, '/شهر'),
+    tag: r.tag ?? '', tag_ar: r.tag_ar ?? '',
+    features: toArray(r.features), features_ar: toArray(r.features_ar),
+    whatsappText: r.whatsappText ?? '', whatsappText_ar: r.whatsappText_ar ?? '',
+    highlight: toBool(r.highlight),
+  }
+}
+
+function normTransformation(r) {
+  return {
+    id: r.id,
+    name: toStr(r.name), name_ar: toStr(r.name_ar),
+    result: toStr(r.result), result_ar: toStr(r.result_ar),
+    goal: toStr(r.goal), goal_ar: toStr(r.goal_ar),
+    image: r.image ?? '', text: r.text ?? '', text_ar: r.text_ar ?? '',
+  }
+}
+
+function normTestimonial(r) {
+  return {
+    id: r.id,
+    name: toStr(r.name), name_ar: toStr(r.name_ar),
+    role: toStr(r.role, 'Client'), role_ar: toStr(r.role_ar, 'عميل'),
+    avatar: toStr(r.avatar, 'https://i.pravatar.cc/100?img=11'),
+    text: toStr(r.text), text_ar: toStr(r.text_ar),
+  }
+}
+
+function normService(r, idx = 0) {
+  if (r == null) return null
+  if (typeof r === 'object' && ('title' in r || 'desc' in r)) {
+    return {
+      id: r.id ?? `local-${idx}`,
+      title: toStr(r.title), title_ar: toStr(r.title_ar),
+      desc: toStr(r.desc), desc_ar: toStr(r.desc_ar),
+      icon: toStr(r.icon, 'flame'),
+    }
+  }
+  return null
+}
+
+function normSupplement(r) {
+  return {
+    id: r.id,
+    name: toStr(r.name), name_ar: toStr(r.name_ar),
+    price: toPrice(r.price),
+    category: toStr(r.category), category_ar: toStr(r.category_ar),
+    description: toStr(r.description), description_ar: toStr(r.description_ar),
+    image: toStr(r.image),
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* DB mappers: UI objects -> insert/update payloads (no id/created_at) */
+/* ------------------------------------------------------------------ */
+
+function coachToDb(c) {
+  return {
+    name: toStr(c.name), name_ar: toStr(c.name_ar),
+    firstName: toStr(c.firstName), firstName_ar: toStr(c.firstName_ar),
+    title: toStr(c.title), title_ar: toStr(c.title_ar),
+    tagline: toStr(c.tagline), tagline_ar: toStr(c.tagline_ar),
+    location: toStr(c.location), location_ar: toStr(c.location_ar),
+    avatar: toStr(c.avatar), cover: toStr(c.cover),
+    bio: toStr(c.bio), bio_ar: toStr(c.bio_ar),
+    whatsappNumber: toStr(c.whatsappNumber), whatsappDisplay: toStr(c.whatsappDisplay),
+    stats: Array.isArray(c.stats) ? c.stats : [],
+    certifications: Array.isArray(c.certifications) ? c.certifications : [],
+    certifications_ar: Array.isArray(c.certifications_ar) ? c.certifications_ar : [],
+    specializations: Array.isArray(c.specializations) ? c.specializations : [],
+    specializations_ar: Array.isArray(c.specializations_ar) ? c.specializations_ar : [],
+    approach: Array.isArray(c.approach) ? c.approach : [],
+  }
+}
+
+function packageToDb(p) {
+  return {
+    name: toStr(p.name), name_ar: toStr(p.name_ar),
+    price: toPrice(p.price),
+    period: toStr(p.period, '/month'), period_ar: toStr(p.period_ar, '/شهر'),
+    tag: p.tag || null, tag_ar: p.tag_ar || null,
+    features: Array.isArray(p.features) ? p.features : toArray(p.features),
+    features_ar: Array.isArray(p.features_ar) ? p.features_ar : toArray(p.features_ar),
+    whatsappText: p.whatsappText || null, whatsappText_ar: p.whatsappText_ar || null,
+    highlight: toBool(p.highlight),
+  }
+}
+
+function transformationToDb(t) {
+  return {
+    name: toStr(t.name), name_ar: t.name_ar || null,
+    result: toStr(t.result), result_ar: t.result_ar || null,
+    goal: t.goal || null, goal_ar: t.goal_ar || null,
+    image: t.image || null, text: t.text || null, text_ar: t.text_ar || null,
+  }
+}
+
+function testimonialToDb(t) {
+  return {
+    name: toStr(t.name), name_ar: t.name_ar || null,
+    role: toStr(t.role, 'Client'), role_ar: toStr(t.role_ar, 'عميل'),
+    avatar: toStr(t.avatar, 'https://i.pravatar.cc/100?img=11'),
+    text: toStr(t.text), text_ar: toStr(t.text_ar),
+  }
+}
+
+function serviceToDb(s) {
+  return {
+    title: toStr(s.title), title_ar: toStr(s.title_ar),
+    desc: toStr(s.desc), desc_ar: toStr(s.desc_ar),
+    icon: toStr(s.icon, 'flame'),
+  }
+}
+
+function supplementToDb(s) {
+  return {
+    name: toStr(s.name), name_ar: toStr(s.name_ar),
+    price: toPrice(s.price),
+    category: toStr(s.category), category_ar: toStr(s.category_ar),
+    description: toStr(s.description), description_ar: toStr(s.description_ar),
+    image: toStr(s.image),
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Local cache helpers                                                 */
+/* ------------------------------------------------------------------ */
+
+function loadCached() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return siteDefaults
+    if (!raw) return null
     const parsed = JSON.parse(raw)
-    // shallow-merge to survive schema additions
+    if (!parsed || typeof parsed !== 'object' || !parsed.coach) return null
     return {
       coach: { ...siteDefaults.coach, ...(parsed.coach || {}) },
-      packages: parsed.packages || siteDefaults.packages,
-      transformations: parsed.transformations || siteDefaults.transformations,
-      testimonials: parsed.testimonials || siteDefaults.testimonials,
-      services: parsed.services || siteDefaults.services,
-      supplements: parsed.supplements || siteDefaults.supplements,
+      packages: Array.isArray(parsed.packages) ? parsed.packages : siteDefaults.packages,
+      transformations: Array.isArray(parsed.transformations) ? parsed.transformations : siteDefaults.transformations,
+      testimonials: Array.isArray(parsed.testimonials) ? parsed.testimonials : siteDefaults.testimonials,
+      services: Array.isArray(parsed.services) ? parsed.services : siteDefaults.services,
+      supplements: Array.isArray(parsed.supplements) ? parsed.supplements : siteDefaults.supplements,
     }
   } catch {
-    return siteDefaults
+    return null
   }
 }
 
@@ -34,54 +217,184 @@ function persistLocal(state) {
   } catch { /* ignore */ }
 }
 
-function validSite(obj) {
-  return obj && typeof obj === 'object' && obj.coach && Array.isArray(obj.packages)
-}
-
+const initial = loadCached() || siteDefaults
 const uid = (p = 'id') => `${p}-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e4)}`
 
+/* ------------------------------------------------------------------ */
+/* Store — Supabase is the source of truth, cache is the fallback      */
+/* ------------------------------------------------------------------ */
+
 export const useSiteStore = create((set, get) => {
-  // persist to browser AND to src/data/site.json (dev server file API)
-  const persist = (state) => {
-    persistLocal(state)
-    get().saveToFile()
+  // Local-only mutation + cache (used when Supabase is down, then synced)
+  const setLocal = (patch) => {
+    set(patch)
+    persistLocal(get())
+    get().saveToFile().catch(() => {})
+  }
+
+  async function dbInsert(table, payload, norm) {
+    if (!isSupabaseConfigured || !supabase) throw new Error('Supabase not configured')
+    const { data, error } = await supabase.from(table).insert(payload).select().single()
+    if (error) throw new Error(`${table} insert: ${error.message}`)
+    return norm(data)
+  }
+
+  async function dbUpdate(table, id, payload) {
+    if (!isSupabaseConfigured || !supabase) throw new Error('Supabase not configured')
+    // numeric ids -> DB row; string ids (local-only) -> cannot update remotely
+    if (typeof id === 'string' || id == null) return null
+    const { error } = await supabase.from(table).update(payload).eq('id', id)
+    if (error) throw new Error(`${table} update: ${error.message}`)
+    return true
+  }
+
+  async function dbDelete(table, id) {
+    if (!isSupabaseConfigured || !supabase) return
+    if (typeof id === 'string' || id == null) return // local-only row, nothing remote
+    const { error } = await supabase.from(table).delete().eq('id', id)
+    if (error) throw new Error(`${table} delete: ${error.message}`)
   }
 
   return {
-    ...loadInitial(),
+    ...initial,
 
-    // 'checking' | 'connected' | 'unavailable' — is the dev file API reachable?
-    fileBackend: 'checking',
+    // ---- connection state ----
+    // supabaseStatus: 'checking' | 'connected' | 'empty' | 'unavailable'
+    supabaseStatus: isSupabaseConfigured ? 'checking' : 'unavailable',
+    supabaseError: isSupabaseConfigured ? null : 'Missing VITE_SUPABASE_URL / KEY in .env',
+    loading: false,
+    lastSync: null,
+
+    // Back-compat aliases for the admin FileStatus component
+    fileBackend: isSupabaseConfigured ? 'checking' : 'unavailable',
     lastFileSave: null,
-    fileError: null,
+    fileError: isSupabaseConfigured ? null : 'Missing Supabase env',
 
-    // Load truth from src/data/site.json via dev server (falls back silently)
-    syncFromFile: async () => {
+    /**
+     * Fetch everything from Supabase. Falls back to cache/bundled JSON.
+     * Called once on boot; call again from admin "Refresh" if needed.
+     */
+    refresh: async () => {
+      if (!isSupabaseConfigured || !supabase) {
+        set({ supabaseStatus: 'unavailable', fileBackend: 'unavailable', loading: false })
+        return false
+      }
+      set({ loading: true })
       try {
-        const res = await fetch(FILE_API)
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        const obj = await res.json()
-        if (!validSite(obj)) throw new Error('Invalid site data')
-        set({
-          coach: { ...siteDefaults.coach, ...obj.coach },
-          packages: obj.packages || [],
-          transformations: obj.transformations || [],
-          testimonials: obj.testimonials || [],
-          services: obj.services || [],
-          supplements: obj.supplements || [],
+        const [coachRes, pkgRes, resRes, tesRes, srvRes, supRes] = await Promise.all([
+          supabase.from('coach').select('*').order('id', { ascending: true }).limit(1).maybeSingle(),
+          supabase.from('packages').select('*').order('created_at', { ascending: true }),
+          supabase.from('transformations').select('*').order('created_at', { ascending: true }),
+          supabase.from('testimonials').select('*').order('created_at', { ascending: true }),
+          supabase.from('services').select('*').order('created_at', { ascending: true }),
+          supabase.from('supplements').select('*').order('created_at', { ascending: true }),
+        ])
+
+        // Missing table = user hasn't run supabase.sql yet
+        const missing = [coachRes, pkgRes, resRes, tesRes, srvRes, supRes].find(
+          (r) => r.error && (r.error.code === 'PGRST205' || /schema cache/i.test(r.error.message))
+        )
+        if (missing) {
+          throw new Error(
+            `Table missing (${missing.error.message}). Run supabase.sql in Supabase SQL Editor, then npm run seed.`
+          )
+        }
+        for (const r of [coachRes, pkgRes, tesRes, srvRes, supRes]) {
+          if (r.error) throw new Error(r.error.message)
+        }
+        // transformations is new — tolerate its absence on old DBs until migration runs
+        let transformations = []
+        if (resRes.error) {
+          console.warn('[site] transformations table missing — run supabase.sql. Using local data.')
+          transformations = get().transformations
+        } else {
+          transformations = (resRes.data || []).map(normTransformation)
+        }
+
+        const allEmpty =
+          !coachRes.data &&
+          (pkgRes.data || []).length === 0 &&
+          (tesRes.data || []).length === 0 &&
+          (srvRes.data || []).length === 0 &&
+          (supRes.data || []).length === 0
+
+        if (allEmpty) {
+          // DB connected but not seeded — keep local content visible, flag it
+          set({
+            supabaseStatus: 'empty',
+            fileBackend: 'connected',
+            supabaseError: 'Supabase is connected but empty — run: npm run seed',
+            lastSync: new Date().toLocaleTimeString(),
+            loading: false,
+          })
+          return false
+        }
+
+        const next = {
+          coach: coachRes.data ? normCoach(coachRes.data) : get().coach,
+          packages: (pkgRes.data || []).map(normPackage),
+          transformations,
+          testimonials: (tesRes.data || []).map(normTestimonial),
+          services: (srvRes.data || []).map(normService).filter(Boolean),
+          supplements: (supRes.data || []).map(normSupplement),
+          supabaseStatus: 'connected',
           fileBackend: 'connected',
+          supabaseError: null,
           fileError: null,
-        })
+          lastSync: new Date().toLocaleTimeString(),
+          loading: false,
+        }
+        // Don't blank out a section just because its table is momentarily empty
+        // while other tables have data (prevents flash-of-empty on partial seeds).
+        const prev = get()
+        if (next.packages.length === 0 && prev.packages.length) next.packages = prev.packages
+        if (next.transformations.length === 0 && prev.transformations.length) next.transformations = prev.transformations
+        if (next.testimonials.length === 0 && prev.testimonials.length) next.testimonials = prev.testimonials
+        if (next.services.length === 0 && prev.services.length) next.services = prev.services
+        if (next.supplements.length === 0 && prev.supplements.length) next.supplements = prev.supplements
+        set(next)
         persistLocal(get())
         return true
       } catch (e) {
-        set({ fileBackend: 'unavailable', fileError: String((e && e.message) || e) })
+        const msg = String((e && e.message) || e)
+        console.warn('[site] Supabase refresh failed, using cache:', msg)
+        set({
+          supabaseStatus: 'unavailable',
+          fileBackend: 'unavailable',
+          supabaseError: msg,
+          fileError: msg,
+          loading: false,
+        })
         return false
       }
     },
 
-    // Write current state into src/data/site.json via dev server
+    // Legacy name — now just re-exports refresh() (+ dev file fallback)
+    syncFromFile: async () => {
+      const ok = await get().refresh()
+      if (ok) return true
+      try {
+        const res = await fetch(FILE_API)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const obj = await res.json()
+        if (obj && obj.coach && Array.isArray(obj.packages)) {
+          set({
+            coach: { ...siteDefaults.coach, ...obj.coach },
+            packages: obj.packages || [],
+            transformations: obj.transformations || [],
+            testimonials: obj.testimonials || [],
+            services: obj.services || [],
+            supplements: obj.supplements || [],
+          })
+          persistLocal(get())
+          return true
+        }
+      } catch { /* ignore — cache already loaded */ }
+      return ok
+    },
+
     saveToFile: async () => {
+      // Supabase is the backend now; the dev file API is a best-effort extra.
       try {
         const res = await fetch(FILE_API, {
           method: 'PUT',
@@ -89,100 +402,273 @@ export const useSiteStore = create((set, get) => {
           body: JSON.stringify(snapshot(get())),
         })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        set({ fileBackend: 'connected', lastFileSave: new Date().toLocaleTimeString(), fileError: null })
+        set({ lastFileSave: new Date().toLocaleTimeString() })
         return true
-      } catch (e) {
-        // expected on static hosting — browser storage still holds the edits
-        set({ fileBackend: 'unavailable', fileError: String((e && e.message) || e) })
+      } catch {
         return false
       }
     },
 
-    // ---- coach content ----
-    updateCoach: (patch) => {
+    /* ---------------- coach ---------------- */
+    updateCoach: async (patch) => {
+      const prev = get().coach
       set((s) => ({ coach: { ...s.coach, ...patch } }))
-      persist(get())
-    },
-    updateCoachArray: (key, value) => {
-      // value as comma-separated string -> array, or array passthrough
-      const arr = Array.isArray(value) ? value : String(value).split(',').map((x) => x.trim()).filter(Boolean)
-      set((s) => ({ coach: { ...s.coach, [key]: arr } }))
-      persist(get())
+      persistLocal(get())
+      try {
+        if (isSupabaseConfigured && supabase && prev.id != null && typeof prev.id !== 'string') {
+          const { error } = await supabase.from('coach').update(coachToDb(get().coach)).eq('id', prev.id)
+          if (error) throw new Error(error.message)
+        } else if (isSupabaseConfigured && supabase && prev.id == null) {
+          const { data, error } = await supabase.from('coach').insert(coachToDb(get().coach)).select().single()
+          if (error) throw new Error(error.message)
+          set((s) => ({ coach: { ...s.coach, id: data.id } }))
+          persistLocal(get())
+        }
+        set({ supabaseError: null, lastSync: new Date().toLocaleTimeString() })
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+      get().saveToFile().catch(() => {})
     },
 
-    // ---- generic CRUD helper ----
-    _setList: (key, list) => {
-      set({ [key]: list })
-      persist(get())
+    updateCoachArray: async (key, value) => {
+      const arrV = Array.isArray(value) ? value : String(value).split(',').map((x) => x.trim()).filter(Boolean)
+      await get().updateCoach({ [key]: arrV })
     },
 
-    // packages
-    addPackage: (pkg) => {
-      const list = [...get().packages, { id: uid('pkg'), highlight: false, features: [], ...pkg }]
-      get()._setList('packages', list)
-    },
-    updatePackage: (id, patch) => {
-      get()._setList('packages', get().packages.map((p) => (p.id === id ? { ...p, ...patch } : p)))
-    },
-    deletePackage: (id) => get()._setList('packages', get().packages.filter((p) => p.id !== id)),
+    /* ---------------- generic ---------------- */
+    _setList: (key, list) => setLocal({ [key]: list }),
 
-    // transformations / results
-    addResult: (r) => {
-      const list = [...get().transformations, { id: uid('res'), ...r }]
-      get()._setList('transformations', list)
+    /* ---------------- packages ---------------- */
+    addPackage: async (pkg) => {
+      const payload = packageToDb({ highlight: false, features: [], ...pkg })
+      try {
+        const row = await dbInsert('packages', payload, normPackage)
+        setLocal({ packages: [...get().packages, row] })
+        return row
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+        const fallback = { id: uid('pkg'), highlight: false, features: [], ...pkg }
+        setLocal({ packages: [...get().packages, fallback] })
+        return fallback
+      }
     },
-    updateResult: (id, patch) => {
-      get()._setList('transformations', get().transformations.map((r) => (r.id === id ? { ...r, ...patch } : r)))
+    updatePackage: async (id, patch) => {
+      setLocal({ packages: get().packages.map((p) => (p.id === id ? { ...p, ...patch } : p)) })
+      try {
+        const current = get().packages.find((p) => p.id === id)
+        if (current) await dbUpdate('packages', id, packageToDb(current))
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
     },
-    deleteResult: (id) => get()._setList('transformations', get().transformations.filter((r) => r.id !== id)),
+    deletePackage: async (id) => {
+      setLocal({ packages: get().packages.filter((p) => p.id !== id) })
+      try { await dbDelete('packages', id) } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
 
-    // testimonials
-    addTestimonial: (t) => get()._setList('testimonials', [...get().testimonials, { id: uid('tes'), ...t }]),
-    updateTestimonial: (id, patch) => get()._setList('testimonials', get().testimonials.map((t) => (t.id === id ? { ...t, ...patch } : t))),
-    deleteTestimonial: (id) => get()._setList('testimonials', get().testimonials.filter((t) => t.id !== id)),
-
-    // services
-    addService: (s) => get()._setList('services', [...get().services, { ...s }]),
-    updateService: (idx, patch) => {
-      const list = get().services.map((s, i) => (i === idx ? { ...s, ...patch } : s))
-      get()._setList('services', list)
+    /* ---------------- transformations / results ---------------- */
+    addResult: async (r) => {
+      try {
+        const row = await dbInsert('transformations', transformationToDb(r), normTransformation)
+        setLocal({ transformations: [...get().transformations, row] })
+        return row
+      } catch (e) {
+        // table may not exist on old DBs — keep local so the UI still works
+        set({ supabaseError: String((e && e.message) || e) })
+        const fallback = { id: uid('res'), ...r }
+        setLocal({ transformations: [...get().transformations, fallback] })
+        return fallback
+      }
     },
-    deleteService: (idx) => get()._setList('services', get().services.filter((_, i) => i !== idx)),
-
-    // supplements (coach shop — bulk-replaced by Excel upload)
-    setSupplements: (list) => {
-      set({ supplements: list })
-      persist(get())
+    updateResult: async (id, patch) => {
+      setLocal({ transformations: get().transformations.map((r) => (r.id === id ? { ...r, ...patch } : r)) })
+      try {
+        const current = get().transformations.find((r) => r.id === id)
+        if (current) await dbUpdate('transformations', id, transformationToDb(current))
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
     },
-    addSupplement: (s) => get()._setList('supplements', [...get().supplements, { id: uid('sup'), ...s }]),
-    updateSupplement: (id, patch) => get()._setList('supplements', get().supplements.map((s) => (s.id === id ? { ...s, ...patch } : s))),
-    deleteSupplement: (id) => get()._setList('supplements', get().supplements.filter((s) => s.id !== id)),
-
-    // ---- import / export / reset ----
-    exportJSON: () => {
-      const { coach, packages, transformations, testimonials, services, supplements } = get()
-      return JSON.stringify({ coach, packages, transformations, testimonials, services, supplements }, null, 2)
+    deleteResult: async (id) => {
+      setLocal({ transformations: get().transformations.filter((r) => r.id !== id) })
+      try { await dbDelete('transformations', id) } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
     },
-    importJSON: (obj) => {
-      set({
+
+    /* ---------------- testimonials ---------------- */
+    addTestimonial: async (t) => {
+      try {
+        const row = await dbInsert('testimonials', testimonialToDb(t), normTestimonial)
+        setLocal({ testimonials: [...get().testimonials, row] })
+        return row
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+        const fallback = { id: uid('tes'), ...t }
+        setLocal({ testimonials: [...get().testimonials, fallback] })
+        return fallback
+      }
+    },
+    updateTestimonial: async (id, patch) => {
+      setLocal({ testimonials: get().testimonials.map((t) => (t.id === id ? { ...t, ...patch } : t)) })
+      try {
+        const current = get().testimonials.find((t) => t.id === id)
+        if (current) await dbUpdate('testimonials', id, testimonialToDb(current))
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+    deleteTestimonial: async (id) => {
+      setLocal({ testimonials: get().testimonials.filter((t) => t.id !== id) })
+      try { await dbDelete('testimonials', id) } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+
+    /* ---------------- services (index API kept, id-aware) ---------------- */
+    _resolveServiceId: (idxOrId) => {
+      const list = get().services
+      if (typeof idxOrId === 'number' && list[idxOrId] && (typeof list[idxOrId].id === 'number')) {
+        return list[idxOrId].id
+      }
+      if (typeof idxOrId === 'number' && list[idxOrId] && String(list[idxOrId].id || '').startsWith('local-')) {
+        return list[idxOrId].id
+      }
+      return idxOrId
+    },
+    addService: async (s) => {
+      try {
+        const row = await dbInsert('services', serviceToDb(s), (d) => normService(d))
+        setLocal({ services: [...get().services, row] })
+        return row
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+        const fallback = { id: uid('srv'), ...s }
+        setLocal({ services: [...get().services, fallback] })
+        return fallback
+      }
+    },
+    updateService: async (idx, patch) => {
+      const list = get().services
+      const target = typeof idx === 'number' ? list[idx] : list.find((s) => s.id === idx)
+      const id = target?.id
+      setLocal({
+        services: list.map((s, i) => (typeof idx === 'number' ? (i === idx ? { ...s, ...patch } : s) : (s.id === idx ? { ...s, ...patch } : s))),
+      })
+      try {
+        const current = typeof idx === 'number' ? get().services[idx] : get().services.find((s) => s.id === idx)
+        if (current) await dbUpdate('services', typeof id === 'number' ? id : current.id, serviceToDb(current))
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+    deleteService: async (idx) => {
+      const list = get().services
+      const target = typeof idx === 'number' ? list[idx] : list.find((s) => s.id === idx)
+      setLocal({
+        services: typeof idx === 'number' ? list.filter((_, i) => i !== idx) : list.filter((s) => s.id !== idx),
+      })
+      try {
+        if (target) await dbDelete('services', target.id)
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+
+    /* ---------------- supplements ---------------- */
+    setSupplements: async (list) => {
+      // bulk replace (Excel upload): wipe + re-insert remotely
+      setLocal({ supplements: list.map((s, i) => ({ id: s.id ?? uid('sup'), ...s })) })
+      if (!isSupabaseConfigured || !supabase) return
+      try {
+        await supabase.from('supplements').delete().neq('id', 0)
+        if (list.length) {
+          const { data, error } = await supabase.from('supplements').insert(list.map(supplementToDb)).select()
+          if (error) throw new Error(error.message)
+          setLocal({ supplements: (data || []).map(normSupplement) })
+        }
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+    addSupplement: async (s) => {
+      try {
+        const row = await dbInsert('supplements', supplementToDb(s), normSupplement)
+        setLocal({ supplements: [...get().supplements, row] })
+        return row
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+        const fallback = { id: uid('sup'), ...s }
+        setLocal({ supplements: [...get().supplements, fallback] })
+        return fallback
+      }
+    },
+    updateSupplement: async (id, patch) => {
+      setLocal({ supplements: get().supplements.map((s) => (s.id === id ? { ...s, ...patch } : s)) })
+      try {
+        const current = get().supplements.find((s) => s.id === id)
+        if (current) await dbUpdate('supplements', id, supplementToDb(current))
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+    deleteSupplement: async (id) => {
+      setLocal({ supplements: get().supplements.filter((s) => s.id !== id) })
+      try { await dbDelete('supplements', id) } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+
+    /* ---------------- import / export / reset ---------------- */
+    exportJSON: () => JSON.stringify(snapshot(get()), null, 2),
+
+    importJSON: async (obj) => {
+      const next = {
         coach: obj.coach || siteDefaults.coach,
         packages: obj.packages || [],
         transformations: obj.transformations || [],
         testimonials: obj.testimonials || [],
         services: obj.services || [],
         supplements: obj.supplements || [],
-      })
-      persist(get())
+      }
+      setLocal(next)
+      // push everything to Supabase (best effort, keeps working offline)
+      if (!isSupabaseConfigured || !supabase) return
+      try {
+        for (const t of ['packages', 'transformations', 'testimonials', 'services', 'supplements']) {
+          await supabase.from(t).delete().neq('id', 0)
+        }
+        if (next.packages.length) await supabase.from('packages').insert(next.packages.map(packageToDb))
+        if (next.transformations.length) await supabase.from('transformations').insert(next.transformations.map(transformationToDb))
+        if (next.testimonials.length) await supabase.from('testimonials').insert(next.testimonials.map(testimonialToDb))
+        if (next.services.length) await supabase.from('services').insert(next.services.map(serviceToDb))
+        if (next.supplements.length) await supabase.from('supplements').insert(next.supplements.map(supplementToDb))
+        const prev = get().coach
+        if (prev?.id != null && typeof prev.id !== 'string') {
+          await supabase.from('coach').update(coachToDb(next.coach)).eq('id', prev.id)
+        }
+        await get().refresh()
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
     },
-    resetAll: () => {
-      set({ ...siteDefaults })
-      persist(get())
+
+    resetAll: async () => {
+      setLocal({ ...siteDefaults })
+      if (!isSupabaseConfigured || !supabase) return
+      try {
+        await get().importJSON(siteDefaults)
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
     },
   }
 })
 
-// On boot, prefer the real file when the dev server is running.
-// (Static builds have no /api/site → falls back to bundled JSON + browser storage.)
+// On boot: Supabase first, dev-file/cache as fallback.
 if (typeof window !== 'undefined') {
-  useSiteStore.getState().syncFromFile()
+  useSiteStore.getState().refresh()
 }

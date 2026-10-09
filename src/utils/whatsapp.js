@@ -1,10 +1,18 @@
-// WhatsApp helpers — number is editable from the hidden admin dashboard.
-// Stored in localStorage (elsum-site-v1) + src/data/site.json defaults.
+// WhatsApp helpers — number lives in Supabase (coach.whatsappNumber),
+// mirrored into the zustand store + localStorage cache by useSiteStore.
 
 const DEFAULT_NUMBER = '201123118787'
 
 export function getWhatsAppNumber() {
-  for (const key of ['elsum-site-v3', 'elsum-site-v2', 'elsum-site-v1']) {
+  // 1) live store (Supabase data once refresh() resolves)
+  try {
+    const num = JSON.parse(localStorage.getItem('elsum-site-v3') || 'null')?.coach?.whatsappNumber
+    // NOTE: imported lazily to avoid a circular import at module top-level.
+    // The store itself persists every change to this same key, so reading
+    // the key here is always as fresh as the store without the cycle.
+    if (num) return String(num)
+  } catch { /* ignore */ }
+  for (const key of ['elsum-site-v2', 'elsum-site-v1']) {
     try {
       const raw = localStorage.getItem(key)
       if (raw) {

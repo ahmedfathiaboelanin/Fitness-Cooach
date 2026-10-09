@@ -1,0 +1,61 @@
+Online Coach — Mohammad Elsum | Gym & Online Coaching Platform
+============================================================
+Project Description for CV / Portfolio / LinkedIn
+
+1) ONE-LINE VERSION (for CV header):
+------------------------------------------------------------
+Bilingual (EN/AR) Gym & Online Coaching platform for coach Mohammad Elsum with WhatsApp booking, BMR calculator, and a full admin CMS — React, Vite, Tailwind, Zustand, Framer Motion.
+
+2) SHORT PARAGRAPH VERSION (recommended for CV):
+------------------------------------------------------------
+Designed and developed a fully responsive, bilingual (English/Arabic with RTL) personal coaching website for Gym & Online Coach Mohammad Elsum. The site includes a landing page with transformations and testimonials, coaching packages, supplement shop, BMR/calorie calculator (Mifflin-St Jeor), 3-step WhatsApp booking flow, and contact pages. Built a hidden admin dashboard CMS to manage all site content (coach bio, packages, results, reviews, services, supplements) with JSON persistence and Excel import/export. Deployed on Vercel with React Router SPA rewrites.
+
+3) FULL DESCRIPTION:
+------------------------------------------------------------
+Online Coach is a production-ready personal brand website for a fitness coach, focused on lead generation via WhatsApp instead of online payment.
+
+Public site pages:
+- Landing: animated hero, services, client transformations, supplements teaser, packages, testimonials
+- About: coach story, certifications, specializations, stats
+- Results / Transformations: client before/after cards with goals and stories
+- Packages: coaching plans with WhatsApp CTA per package
+- Supplements: searchable shop catalog with category filters, order via WhatsApp
+- BMR Calculator: gender, age, height, weight, activity level, goal → BMR, TDEE, target calories, protein range, water intake, shareable to WhatsApp
+- Booking: 3-step wizard (1. choose package, 2. name/goal/date/time, 3. auto-generated WhatsApp confirmation message)
+- Contact: direct WhatsApp, location, social links
+
+Admin CMS (route: /elsum-admin):
+- Login-guarded dashboard with tabs: Content, Packages, Results, Reviews, Services, Supplements, JSON/Save
+- Full CRUD for all collections in EN + AR
+- Auto-save to src/data/site.json in dev mode
+- Excel workflow: export whole site to .xlsx (sheets: Packages, Results, Testimonials, Services, Supplements), edit in Excel, re-upload to replace content — with Arabic header support
+- JSON backup: export / copy / import site.json, reset to defaults
+
+UX / Technical highlights:
+- Bilingual EN/AR with instant language switch and full RTL layout support
+- Dark fire-themed design (stone + rose), Tailwind CSS, custom gradients and shadows
+- Book-paper page-turn transitions between routes with Framer Motion + AnimatePresence
+- Floating WhatsApp button, ember particle background, scroll animations, stat bursts
+- State management with Zustand (site content store, admin auth store, preferences store for theme/language)
+- Form handling with React Hook Form, icons with Lucide React, Excel parsing with SheetJS (xlsx)
+- Fully responsive, mobile-first, SEO meta + custom favicon
+
+4) TECH STACK:
+------------------------------------------------------------
+Frontend: React 18, Vite 5, React Router DOM 6, Tailwind CSS 3
+State: Zustand 4 (+ localStorage persistence)
+Animation: Framer Motion 11
+Forms/Icons/Data: React Hook Form 7, Lucide React, SheetJS (xlsx)
+i18n: Custom EN/AR dictionary + RTL support
+Deployment: Vercel (SPA rewrite to index.html)
+
+5) MY ROLE & KEYWORDS FOR ATS:
+------------------------------------------------------------
+Role: Frontend Developer (Solo — Design, Development, Deployment)
+Keywords: React, Vite, JavaScript, Responsive Design, Tailwind CSS, Zustand, React Router, Framer Motion, Bilingual UI, RTL, CMS, Excel Import/Export, WhatsApp API Integration, Vercel
+
+6) LINKS:
+------------------------------------------------------------
+Live Demo: [ADD YOUR VERCEL URL HERE]
+GitHub: https://github.com/ahmedfathiaboelanin/Fitness-Cooach.git
+Developer: Ahmed Fathi — Frontend Developer (React)

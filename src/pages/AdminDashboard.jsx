@@ -35,7 +35,7 @@ function ContentTab() {
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }))
   const save = () => {
     updateCoach(form)
-    alert('Saved! Written to src/data/site.json (when running npm run dev)')
+    alert('Saved! Written to Supabase — live on the site now ✅')
   }
   return (
     <Card className="space-y-3">
@@ -374,25 +374,38 @@ function SupplementsTab() {
 }
 
 function FileStatus() {
-  const fileBackend = useSiteStore((s) => s.fileBackend)
-  const lastFileSave = useSiteStore((s) => s.lastFileSave)
-  const saveToFile = useSiteStore((s) => s.saveToFile)
-  if (fileBackend === 'connected') {
+  const supabaseStatus = useSiteStore((s) => s.supabaseStatus)
+  const supabaseError = useSiteStore((s) => s.supabaseError)
+  const lastSync = useSiteStore((s) => s.lastSync)
+  const loading = useSiteStore((s) => s.loading)
+  const refresh = useSiteStore((s) => s.refresh)
+  if (supabaseStatus === 'connected') {
     return (
       <div className="flex flex-wrap items-center gap-2 text-xs bg-green-500/10 border border-green-500/30 rounded-xl px-3 py-2">
-        <span className="text-green-400 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400" /> Auto-save to site.json ON</span>
-        <span className="text-stone-400">every edit writes to src/data/site.json{lastFileSave ? ` • last saved ${lastFileSave}` : ''}</span>
-        <button onClick={() => saveToFile()} className="ms-auto bg-green-600/20 border border-green-500/40 px-2.5 py-1 rounded-lg font-bold hover:bg-green-600/30 inline-flex items-center gap-1.5"><Save size={13} /> Save now</button>
+        <span className="text-green-400 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-green-400" /> Supabase live ✅</span>
+        <span className="text-stone-400">every edit writes to Supabase instantly{lastSync ? ` • last sync ${lastSync}` : ''}</span>
+        <button onClick={() => refresh()} className="ms-auto bg-green-600/20 border border-green-500/40 px-2.5 py-1 rounded-lg font-bold hover:bg-green-600/30 inline-flex items-center gap-1.5"><Save size={13} /> {loading ? 'Syncing…' : 'Refresh'}</button>
       </div>
     )
   }
-  if (fileBackend === 'checking') {
-    return <div className="text-xs text-stone-400 bg-white/5 border border-white/10 rounded-xl px-3 py-2">Checking file connection…</div>
+  if (supabaseStatus === 'empty') {
+    return (
+      <div className="text-xs bg-sky-500/10 border border-sky-500/30 rounded-xl px-3 py-2">
+        <span className="text-sky-300 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-sky-300" /> Supabase connected but empty</span>
+        <span className="text-stone-400"> — run <code className="bg-stone-800 px-1 rounded">npm run seed</code> to push src/data/site.json into the database, then </span>
+        <button onClick={() => refresh()} className="underline font-bold text-sky-300">Refresh</button>
+        <span className="text-stone-400">.</span>
+      </div>
+    )
+  }
+  if (supabaseStatus === 'checking' || loading) {
+    return <div className="text-xs text-stone-400 bg-white/5 border border-white/10 rounded-xl px-3 py-2">Connecting to Supabase…</div>
   }
   return (
     <div className="text-xs bg-amber-500/10 border border-amber-500/30 rounded-xl px-3 py-2">
-      <span className="text-amber-300 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-300" /> Dev file API unavailable</span>
-      <span className="text-stone-400"> — are you running <code className="bg-stone-800 px-1 rounded">npm run dev</code>? Edits are kept in this browser only; use Export below as backup.</span>
+      <span className="text-amber-300 font-bold flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-amber-300" /> Supabase unavailable — offline mode</span>
+      <span className="text-stone-400"> — {supabaseError || 'check .env'} Edits are kept in this browser only; use Export below as backup. </span>
+      <button onClick={() => refresh()} className="underline font-bold text-amber-300">Retry</button>
     </div>
   )
 }
@@ -557,8 +570,8 @@ function SettingsTab() {
     <div className="space-y-4">
       <FileStatus />
       <Card>
-        <h3 className="font-display text-xl uppercase flex items-center gap-2"><Save size={20} className="text-rose-400" /> Save to JSON file</h3>
-        <p className="text-xs text-stone-400 mt-1">While running <code className="bg-stone-800 px-1 rounded">npm run dev</code>, every edit above is written straight into <b className="text-white">src/data/site.json</b> — no Export step needed. Export below is only a backup (e.g. for static hosting).</p>
+        <h3 className="font-display text-xl uppercase flex items-center gap-2"><Save size={20} className="text-rose-400" /> Supabase live save</h3>
+        <p className="text-xs text-stone-400 mt-1">Every edit above writes straight to <b className="text-white">Supabase</b> — no Export step needed. The site reads from the database on every visit. Export below is only a backup.</p>
         <div className="flex flex-wrap gap-2 mt-3">
           <Button onClick={download}><span className="inline-flex items-center gap-1.5"><Download size={16} /> Export site.json (backup)</span></Button>
           <Button variant="secondary" onClick={() => { navigator.clipboard?.writeText(exportJSON()); alert('Copied! Paste into src/data/site.json') }}><span className="inline-flex items-center gap-1.5"><Copy size={16} /> Copy JSON</span></Button>

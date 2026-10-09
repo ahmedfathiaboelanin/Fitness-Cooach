@@ -23,6 +23,7 @@ export default function Landing() {
   const { t, isAR } = useT()
   const { pick, pickArr } = useL()
   const waStart = isAR ? 'أهلاً محمد! عايز أبدأ التدريب معاك. هدفي هو:' : 'Hi Mohammad! I want to start coaching with you. My goal is:'
+
   return (
     <div className="bg-stone-950 text-stone-100 overflow-x-hidden">
       {/* HERO */}
