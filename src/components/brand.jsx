@@ -22,25 +22,6 @@ export function CoachLogo({ size = 36, className = '' }) {
   )
 }
 
-export function MarqueeStrip({ items, itemsAr }) {
-  const lang = usePrefsStore((s) => s.lang)
-  const defaults = lang === 'ar'
-    ? (itemsAr || ['بدون أعذار', 'اتمرن بقوة', 'خليك مستمر', 'محمد الصم', 'جيم • أونلاين'])
-    : (items || ['NO EXCUSES', 'TRAIN HARD', 'STAY CONSISTENT', 'MOHAMMAD ELSUM', 'GYM • ONLINE'])
-  const row = [...defaults, ...defaults]
-  return (
-    <div className="marquee-soft relative overflow-hidden bg-[#071022] py-3 border-y border-blue-500/20">
-      <div className="marquee-track gap-8 pr-8">
-        {row.map((t, i) => (
-          <span key={i} className="font-display text-[#9CC0FF] text-xl md:text-2xl uppercase whitespace-nowrap flex items-center gap-8">
-            {t} <Flame size={22} strokeWidth={2.5} className="text-[#2E7BFF]" />
-          </span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export function EmberBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">

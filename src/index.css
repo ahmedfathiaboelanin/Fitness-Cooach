@@ -90,18 +90,11 @@ body {
   box-shadow: 0 12px 24px -12px rgba(46, 123, 255, 0.65);
 }
 .btn-fire:active { transform: scale(.97); }
-.btn-fire::after {
-  content: none;
-}
 
 /* Any lingering gradient utility becomes a flat blue surface */
 .bg-fire-gradient {
   background: var(--accent) !important;
   background-image: none !important;
-}
-.animate-gradient-x {
-  animation: none !important;
-  background-size: auto !important;
 }
 
 /* Calm WhatsApp button — muted green, gentle glow */
@@ -148,11 +141,6 @@ body {
   opacity: 0.08;
 }
 
-/* Marquee strip — flat, calm */
-.marquee-soft {
-  filter: none;
-}
-
 /* Language toggle — flat blue chip in dark, calm surface chip in light */
 .lang-toggle {
   background: var(--accent);
@@ -175,13 +163,6 @@ body {
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--line);
   box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.55);
-}
-
-/* Marquee strip */
-.marquee-track {
-  display: flex;
-  width: max-content;
-  animation: marquee 22s linear infinite;
 }
 
 /* Grid overlay — cool blue lines */
@@ -349,6 +330,5 @@ img, video, svg {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .marquee-track { animation: none !important; }
   * { scroll-behavior: auto !important; }
 }

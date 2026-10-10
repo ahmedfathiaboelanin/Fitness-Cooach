@@ -7,7 +7,6 @@ import { waLink } from '../utils/whatsapp'
 import { useSiteStore } from '../store/useSiteStore'
 import { usePrefsStore } from '../store/usePrefsStore'
 import { useT, useL } from '../i18n/useT'
-import { WhatsAppFloat } from '../components/WhatsApp'
 
 function Toggles() {
   const theme = usePrefsStore((s) => s.theme)
@@ -251,7 +250,6 @@ export function MainLayout({ children }) {
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-      {/* <WhatsAppFloat /> */}
     </div>
   )
 }

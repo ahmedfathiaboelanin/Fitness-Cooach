@@ -5,7 +5,7 @@ import { useSiteStore } from '../store/useSiteStore'
 import { useT, useL } from '../i18n/useT'
 import { SectionTitle, Badge } from '../components/ui'
 import { WhatsAppButton } from '../components/WhatsApp'
-import { MarqueeStrip, EmberBackground, StatBurst, CoachLogo } from '../components/brand'
+import { EmberBackground, StatBurst, CoachLogo } from '../components/brand'
 import { waLink } from '../utils/whatsapp'
 import heroImg from '../assets/images/hero.jpg'
 
@@ -58,8 +58,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
-
-      {/* <MarqueeStrip /> */}
 
       {/* SERVICES */}
       <section className="container-x py-16">

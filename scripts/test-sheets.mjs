@@ -6,14 +6,12 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import * as XLSX from 'xlsx'
 import {
-  parseWorkbook, toSheetRow, coachToSheetRow, sheetNames,
+  parseWorkbook, toSheetRow, coachToSheetRow,
 } from '../src/utils/sheetSync.js'
+import { ROOT } from './lib/env.mjs'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const ROOT = path.resolve(__dirname, '..')
 const site = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'data', 'site.json'), 'utf-8'))
 
 let failures = 0

@@ -9,29 +9,9 @@
  * the browser (no VITE_ prefix) and NEVER commit .env.
  * Passwords are stored as SHA-256 hex — same as the dashboard Security tab.
  */
-import fs from 'node:fs'
-import path from 'node:path'
 import { createHash } from 'node:crypto'
-import { fileURLToPath } from 'node:url'
 import { createClient } from '@supabase/supabase-js'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const ROOT = path.resolve(__dirname, '..')
-
-function loadEnv() {
-  for (const file of ['.env', '.env.local']) {
-    const p = path.join(ROOT, file)
-    if (!fs.existsSync(p)) continue
-    for (const line of fs.readFileSync(p, 'utf-8').split(/\r?\n/)) {
-      const m = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/)
-      if (!m || process.env[m[1]]) continue
-      let v = m[2].trim()
-      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1)
-      process.env[m[1]] = v
-    }
-  }
-}
-loadEnv()
+import { serviceEnv } from './lib/env.mjs'
 
 const args = Object.fromEntries(
   process.argv.slice(2).filter((a) => a.startsWith('--')).map((a) => {
@@ -41,8 +21,7 @@ const args = Object.fromEntries(
 )
 const command = process.argv[2] && !process.argv[2].startsWith('--') ? process.argv[2] : 'reset'
 
-const URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+const { url: URL, key: SERVICE_KEY } = serviceEnv()
 
 if (!URL || !SERVICE_KEY) {
   console.error('❌ Need VITE_SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY in .env')

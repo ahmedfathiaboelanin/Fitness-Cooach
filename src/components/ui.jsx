@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Flame, X, Star } from 'lucide-react'
+import { Flame } from 'lucide-react'
 
 export function Button({ children, variant = 'primary', className = '', ...props }) {
   const base = 'px-5 py-2.5 rounded-xl font-bold transition active:scale-95 disabled:opacity-50 inline-flex items-center justify-center gap-2'
@@ -56,35 +56,5 @@ export function SectionTitle({ title, subtitle, center, eyebrow = 'MOHAMMAD ELSU
       <div className={`h-1 w-20 mt-4 rounded-full bg-[#2E7BFF] ${center ? 'mx-auto' : ''}`} />
       {subtitle && <p className="text-stone-400 mt-3 max-w-2xl ${center ? 'mx-auto' : ''}">{subtitle}</p>}
     </motion.div>
-  )
-}
-
-export function Stars({ size = 14 }) {
-  return (
-    <span className="inline-flex items-center gap-0.5 text-amber-400">
-      {[0, 1, 2, 3, 4].map((i) => <Star key={i} size={size} fill="currentColor" />)}
-    </span>
-  )
-}
-
-export function RatingStars({ rating }) {
-  return (
-    <span className="flex items-center gap-1 text-sm">
-      <Star size={14} className="text-amber-400" fill="currentColor" />
-      <b>{rating}</b>
-    </span>
-  )
-}
-
-export function Modal({ open, onClose, children }) {
-  if (!open) return null
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ scale: 0.92, opacity: 0, y: 10 }} animate={{ scale: 1, opacity: 1, y: 0 }} className="relative bg-stone-900 border border-blue-500/25 rounded-2xl p-6 max-w-md w-full shadow-fire-lg">
-        <button onClick={onClose} className="absolute top-4 right-4 text-stone-400 hover:text-white"><X size={18} /></button>
-        {children}
-      </motion.div>
-    </div>
   )
 }

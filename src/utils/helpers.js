@@ -1,5 +1,3 @@
-export const formatPrice = (p) => `$${p}/session`
-export const cx = (...c) => c.filter(Boolean).join(' ')
 export const timeSlots = ['08:00', '09:00', '10:00', '11:00', '16:00', '17:00', '18:00']
 export const next7Days = () => {
   const days = []
