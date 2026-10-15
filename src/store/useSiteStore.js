@@ -2,8 +2,9 @@ import { create } from 'zustand'
 import siteDefaults from '../data/site.json'
 import { supabase, isSupabaseConfigured } from '../utils/supabase'
 import {
-  normCoach, normPackage, normTransformation, normTestimonial, normService, normSupplement,
-  coachToDb, packageToDb, transformationToDb, testimonialToDb, serviceToDb, supplementToDb,
+  normCoach, normPackage, normTransformation, normTestimonial, normService, normSupplement, normBlog,
+  coachToDb, packageToDb, transformationToDb, testimonialToDb, serviceToDb, supplementToDb, blogToDb,
+  slugify,
 } from './siteShapes'
 
 const STORAGE_KEY = 'elsum-site-v3'
@@ -26,6 +27,7 @@ function loadCached() {
       testimonials: Array.isArray(parsed.testimonials) ? parsed.testimonials : siteDefaults.testimonials,
       services: Array.isArray(parsed.services) ? parsed.services : siteDefaults.services,
       supplements: Array.isArray(parsed.supplements) ? parsed.supplements : siteDefaults.supplements,
+      blogs: Array.isArray(parsed.blogs) ? parsed.blogs : (siteDefaults.blogs || []),
     }
   } catch {
     return null
@@ -33,8 +35,8 @@ function loadCached() {
 }
 
 function snapshot(state) {
-  const { coach, packages, transformations, testimonials, services, supplements } = state
-  return { coach, packages, transformations, testimonials, services, supplements }
+  const { coach, packages, transformations, testimonials, services, supplements, blogs } = state
+  return { coach, packages, transformations, testimonials, services, supplements, blogs: blogs || [] }
 }
 
 function persistLocal(state) {
@@ -107,13 +109,14 @@ export const useSiteStore = create((set, get) => {
       }
       set({ loading: true })
       try {
-        const [coachRes, pkgRes, resRes, tesRes, srvRes, supRes] = await Promise.all([
+        const [coachRes, pkgRes, resRes, tesRes, srvRes, supRes, blogRes] = await Promise.all([
           supabase.from('coach').select('*').order('id', { ascending: true }).limit(1).maybeSingle(),
           supabase.from('packages').select('*').order('created_at', { ascending: true }),
           supabase.from('transformations').select('*').order('created_at', { ascending: true }),
           supabase.from('testimonials').select('*').order('created_at', { ascending: true }),
           supabase.from('services').select('*').order('created_at', { ascending: true }),
           supabase.from('supplements').select('*').order('created_at', { ascending: true }),
+          supabase.from('blogs').select('*').order('created_at', { ascending: false }),
         ])
 
         // Missing table = user hasn't run supabase.sql yet
@@ -135,6 +138,13 @@ export const useSiteStore = create((set, get) => {
           transformations = get().transformations
         } else {
           transformations = (resRes.data || []).map(normTransformation)
+        }
+        // blogs table is new — tolerate absence until migration runs
+        let blogs = get().blogs || []
+        if (blogRes.error) {
+          console.warn('[site] blogs table missing — run supabase.sql. Using local data.')
+        } else {
+          blogs = (blogRes.data || []).map(normBlog)
         }
 
         const allEmpty =
@@ -163,6 +173,7 @@ export const useSiteStore = create((set, get) => {
           testimonials: (tesRes.data || []).map(normTestimonial),
           services: (srvRes.data || []).map(normService).filter(Boolean),
           supplements: (supRes.data || []).map(normSupplement),
+          blogs,
           supabaseStatus: 'connected',
           fileBackend: 'connected',
           supabaseError: null,
@@ -211,6 +222,7 @@ export const useSiteStore = create((set, get) => {
             testimonials: obj.testimonials || [],
             services: obj.services || [],
             supplements: obj.supplements || [],
+            blogs: obj.blogs || [],
           })
           persistLocal(get())
           return true
@@ -467,6 +479,39 @@ export const useSiteStore = create((set, get) => {
       }
     },
 
+    /* ---------------- blogs ---------------- */
+    addBlog: async (b) => {
+      const payload = blogToDb({ published: true, featured: false, ...b })
+      // keep slug unique locally (DB has UNIQUE too)
+      if (!payload.slug) payload.slug = slugify(payload.title)
+      try {
+        const row = await dbInsert('blogs', payload, normBlog)
+        setLocal({ blogs: [row, ...get().blogs] })
+        return row
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+        const fallback = { id: uid('blog'), created_at: new Date().toISOString(), ...b, slug: payload.slug, tags: Array.isArray(b.tags) ? b.tags : String(b.tags || '').split(',').map((x) => x.trim()).filter(Boolean), published: b.published == null ? true : !!b.published, featured: !!b.featured }
+        setLocal({ blogs: [fallback, ...get().blogs] })
+        return fallback
+      }
+    },
+    updateBlog: async (id, patch) => {
+      const list = get().blogs.map((b) => (b.id === id ? { ...b, ...patch } : b))
+      setLocal({ blogs: list })
+      try {
+        const current = list.find((b) => b.id === id)
+        if (current) await dbUpdate('blogs', id, blogToDb(current))
+      } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+    deleteBlog: async (id) => {
+      setLocal({ blogs: get().blogs.filter((b) => b.id !== id) })
+      try { await dbDelete('blogs', id) } catch (e) {
+        set({ supabaseError: String((e && e.message) || e) })
+      }
+    },
+
     /* ---------------- import / export / reset ---------------- */
     exportJSON: () => JSON.stringify(snapshot(get()), null, 2),
 
@@ -478,6 +523,7 @@ export const useSiteStore = create((set, get) => {
         testimonials: obj.testimonials || [],
         services: obj.services || [],
         supplements: obj.supplements || [],
+        blogs: obj.blogs || [],
       }
       const before = snapshot(get())
       setLocal(next)
@@ -515,6 +561,7 @@ export const useSiteStore = create((set, get) => {
       await syncTable('testimonials', next.testimonials, testimonialToDb)
       await syncTable('services', next.services, serviceToDb)
       await syncTable('supplements', next.supplements, supplementToDb)
+      await syncTable('blogs', next.blogs, blogToDb)
       try {
         const prev = get().coach
         if (prev?.id != null && typeof prev.id !== 'string') {

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Flame, Calculator, Check, Star, ArrowRight, Dumbbell, Laptop, Salad, Video, Pill } from 'lucide-react'
+import { Flame, Calculator, Check, Star, ArrowRight, Dumbbell, Laptop, Salad, Video, Pill, Newspaper } from 'lucide-react'
 import { useSiteStore } from '../store/useSiteStore'
 import { useT, useL } from '../i18n/useT'
 import { SectionTitle, Badge } from '../components/ui'
@@ -20,6 +20,8 @@ export default function Landing() {
   const testimonials = useSiteStore((s) => s.testimonials)
   const services = useSiteStore((s) => s.services)
   const supplements = useSiteStore((s) => s.supplements)
+  const blogs = useSiteStore((s) => s.blogs || [])
+  const latestBlogs = (blogs || []).filter((b) => b.published !== false).slice(0, 3)
   const { t, isAR } = useT()
   const { pick, pickArr } = useL()
   const waStart = isAR ? 'أهلاً محمد! عايز أبدأ التدريب معاك. هدفي هو:' : 'Hi Mohammad! I want to start coaching with you. My goal is:'
@@ -138,6 +140,32 @@ export default function Landing() {
           </div>
         </motion.div>
       </section>
+
+      {/* BLOG TEASER */}
+      {latestBlogs.length > 0 && (
+        <section className="container-x py-8">
+          <SectionTitle
+            title={isAR ? <>من <span className="text-fire">المدونة</span></> : <>From the <span className="text-fire">Blog</span></>}
+            subtitle={isAR ? 'نصايح سريعة عن التخسيس والعضلات والتغذية' : 'Quick tips on fat loss, muscle and nutrition'}
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {latestBlogs.map((b, i) => (
+              <motion.div key={b.id ?? b.slug} {...fadeUp} transition={{ delay: i * 0.06 }} whileHover={{ y: -6 }}>
+                <Link to={`/blog/${b.slug}`} className="card-fire overflow-hidden group flex flex-col h-full">
+                  {b.cover
+                    ? <img src={b.cover} alt={pick(b, 'title')} loading="lazy" className="h-40 w-full object-cover group-hover:scale-105 transition duration-500" />
+                    : <div className="h-40 w-full bg-stone-900 flex items-center justify-center"><Newspaper size={36} className="text-rose-400" /></div>}
+                  <div className="p-4">
+                    <h3 className="font-bold text-white group-hover:text-rose-300 transition line-clamp-2">{pick(b, 'title')}</h3>
+                    {pick(b, 'excerpt') && <p className="text-xs text-stone-400 mt-1 line-clamp-2">{pick(b, 'excerpt')}</p>}
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+          <div className="text-center mt-6"><Link to="/blog" className="btn-fire inline-flex items-center gap-2 px-6 py-3 rounded-xl font-extrabold text-white">{isAR ? 'كل المقالات' : 'All articles'} <ArrowRight size={18} className="rtl:rotate-180" /></Link></div>
+        </section>
+      )}
 
       {/* PACKAGES */}
       <section className="container-x py-8 pb-16">

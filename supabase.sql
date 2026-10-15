@@ -129,6 +129,26 @@ CREATE TABLE IF NOT EXISTS public.supplements (
   image text NOT NULL DEFAULT ''
 );
 
+-- ---------- blogs (articles / tips) ----------
+CREATE TABLE IF NOT EXISTS public.blogs (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now(),
+  slug text NOT NULL UNIQUE,
+  title text NOT NULL,
+  title_ar text NOT NULL DEFAULT '',
+  excerpt text NOT NULL DEFAULT '',
+  excerpt_ar text NOT NULL DEFAULT '',
+  content text NOT NULL DEFAULT '',
+  content_ar text NOT NULL DEFAULT '',
+  cover text NOT NULL DEFAULT '',
+  category text NOT NULL DEFAULT '',
+  category_ar text NOT NULL DEFAULT '',
+  tags jsonb NOT NULL DEFAULT '[]'::jsonb,
+  published boolean NOT NULL DEFAULT true,
+  featured boolean NOT NULL DEFAULT false
+);
+
 -- ============================================================
 -- MIGRATION: fix old column types from the first schema dump.
 -- Safe to run on empty tables AND on tables with data.
@@ -236,6 +256,19 @@ ALTER TABLE public.packages   ADD COLUMN IF NOT EXISTS "whatsappText_ar" text;
 ALTER TABLE public.supplements ADD COLUMN IF NOT EXISTS name_ar text DEFAULT '';
 ALTER TABLE public.supplements ADD COLUMN IF NOT EXISTS category_ar text DEFAULT '';
 ALTER TABLE public.supplements ADD COLUMN IF NOT EXISTS description_ar text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS slug text;
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS title_ar text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS excerpt text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS excerpt_ar text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS content text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS content_ar text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS cover text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS category text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS category_ar text DEFAULT '';
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS tags jsonb DEFAULT '[]'::jsonb;
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS published boolean DEFAULT true;
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS featured boolean DEFAULT false;
+ALTER TABLE public.blogs ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
 
 -- ============================================================
 -- RLS: public site needs read access; the frontend-only admin
@@ -249,6 +282,7 @@ ALTER TABLE public.transformations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.testimonials    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.services        ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.supplements     ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blogs           ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Public read" ON public.users;
 DROP POLICY IF EXISTS "Public read" ON public.coach;
@@ -257,6 +291,7 @@ DROP POLICY IF EXISTS "Public read" ON public.transformations;
 DROP POLICY IF EXISTS "Public read" ON public.testimonials;
 DROP POLICY IF EXISTS "Public read" ON public.services;
 DROP POLICY IF EXISTS "Public read" ON public.supplements;
+DROP POLICY IF EXISTS "Public read" ON public.blogs;
 
 CREATE POLICY "Public read" ON public.users           FOR SELECT USING (true);
 CREATE POLICY "Public read" ON public.coach           FOR SELECT USING (true);
@@ -265,6 +300,7 @@ CREATE POLICY "Public read" ON public.transformations FOR SELECT USING (true);
 CREATE POLICY "Public read" ON public.testimonials    FOR SELECT USING (true);
 CREATE POLICY "Public read" ON public.services        FOR SELECT USING (true);
 CREATE POLICY "Public read" ON public.supplements     FOR SELECT USING (true);
+CREATE POLICY "Public read" ON public.blogs           FOR SELECT USING (true);
 
 DROP POLICY IF EXISTS "Public write" ON public.users;
 DROP POLICY IF EXISTS "Public write" ON public.coach;
@@ -273,6 +309,7 @@ DROP POLICY IF EXISTS "Public write" ON public.transformations;
 DROP POLICY IF EXISTS "Public write" ON public.testimonials;
 DROP POLICY IF EXISTS "Public write" ON public.services;
 DROP POLICY IF EXISTS "Public write" ON public.supplements;
+DROP POLICY IF EXISTS "Public write" ON public.blogs;
 
 CREATE POLICY "Public write" ON public.users           FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Public write" ON public.coach           FOR ALL USING (true) WITH CHECK (true);
@@ -281,6 +318,7 @@ CREATE POLICY "Public write" ON public.transformations FOR ALL USING (true) WITH
 CREATE POLICY "Public write" ON public.testimonials    FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Public write" ON public.services        FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Public write" ON public.supplements     FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Public write" ON public.blogs           FOR ALL USING (true) WITH CHECK (true);
 
 -- Helpful ordering indexes
 CREATE INDEX IF NOT EXISTS packages_created_idx        ON public.packages (created_at);
@@ -288,6 +326,8 @@ CREATE INDEX IF NOT EXISTS transformations_created_idx ON public.transformations
 CREATE INDEX IF NOT EXISTS testimonials_created_idx   ON public.testimonials (created_at);
 CREATE INDEX IF NOT EXISTS services_created_idx       ON public.services (created_at);
 CREATE INDEX IF NOT EXISTS supplements_created_idx    ON public.supplements (created_at);
+CREATE INDEX IF NOT EXISTS blogs_created_idx          ON public.blogs (created_at);
+CREATE INDEX IF NOT EXISTS blogs_slug_idx             ON public.blogs (slug);
 
 -- ============================================================
 -- ADMIN AUTH (dashboard login + change password)

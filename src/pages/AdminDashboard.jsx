@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as XLSX from 'xlsx'
-import { FileText, Package, Trophy, MessageCircle, Zap, Dumbbell, Save, Lock, Download, RotateCcw, Upload, Plus, Pill, FileSpreadsheet, FileJson, ArrowRight, Laptop, Salad, Video, Flame, RefreshCw, BookOpen, Globe, ShieldCheck } from 'lucide-react'
+import { FileText, Package, Trophy, MessageCircle, Zap, Dumbbell, Save, Lock, Download, RotateCcw, Upload, Plus, Pill, FileSpreadsheet, FileJson, ArrowRight, Laptop, Salad, Video, Flame, RefreshCw, BookOpen, Globe, ShieldCheck, Newspaper } from 'lucide-react'
 import { useAdminStore } from '../store/useAdminStore'
 import { useSiteStore } from '../store/useSiteStore'
 import { usePrefsStore } from '../store/usePrefsStore'
@@ -26,6 +26,7 @@ function GuideTab({ go }) {
     { key: 'testimonials', Icon: MessageCircle },
     { key: 'services', Icon: Zap },
     { key: 'supplements', Icon: Pill },
+    { key: 'blog', Icon: Newspaper },
     { key: 'security', Icon: ShieldCheck },
     { key: 'data', Icon: Save },
   ]
@@ -478,6 +479,103 @@ function SupplementsTab({ goData }) {
   )
 }
 
+// ---------- BLOG ----------
+function BlogsTab({ goData }) {
+  const { a } = useA()
+  const list = useSiteStore((s) => s.blogs || [])
+  const { addBlog, updateBlog, deleteBlog } = useSiteStore()
+  const [editing, setEditing] = useState(null)
+  const [form, setForm] = useState({ slug: '', title: '', title_ar: '', excerpt: '', excerpt_ar: '', content: '', content_ar: '', cover: '', category: '', category_ar: '', tags: '', published: true, featured: false })
+  const resetForm = () => {
+    setEditing(null)
+    setForm({ slug: '', title: '', title_ar: '', excerpt: '', excerpt_ar: '', content: '', content_ar: '', cover: '', category: '', category_ar: '', tags: '', published: true, featured: false })
+  }
+  const startEdit = (b) => {
+    setEditing(b.id)
+    setForm({
+      slug: b.slug || '', title: b.title || '', title_ar: b.title_ar || '',
+      excerpt: b.excerpt || '', excerpt_ar: b.excerpt_ar || '',
+      content: b.content || '', content_ar: b.content_ar || '',
+      cover: b.cover || '', category: b.category || '', category_ar: b.category_ar || '',
+      tags: (b.tags || []).join(', '), published: b.published !== false, featured: !!b.featured,
+    })
+  }
+  const save = async () => {
+    if (!form.title.trim() || !form.slug.trim()) return alert(a('slugRequired'))
+    const payload = {
+      ...form,
+      slug: form.slug.trim().toLowerCase().replace(/\s+/g, '-'),
+      tags: String(form.tags || '').split(',').map((x) => x.trim()).filter(Boolean),
+    }
+    if (editing) await updateBlog(editing, payload)
+    else await addBlog(payload)
+    resetForm()
+  }
+  const autoSlug = () => {
+    setForm((f) => ({ ...f, slug: f.title.trim().toLowerCase().replace(/[^\p{L}\p{N}\s-]/gu, '').replace(/[\s_]+/g, '-').slice(0, 80) }))
+  }
+  return (
+    <div className="space-y-4">
+      <TabTitle icon={Newspaper} title={`${editing ? a('blogEdit') : a('blogAdd')} ${a('enAr')}`} />
+      <Card>
+        <div className="grid sm:grid-cols-2 gap-3">
+          <Field ltr label={a('titleEn')} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Fat Loss Basics" />
+          <Field label={a('titleAr')} value={form.title_ar} onChange={(e) => setForm({ ...form, title_ar: e.target.value })} placeholder="أساسيات التخسيس" />
+          <div>
+            <label className={labelCls}>{a('slugL')}</label>
+            <div className="flex gap-2 mt-1">
+              <input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} dir="ltr" placeholder="fat-loss-basics" className={inputCls} />
+              <button onClick={autoSlug} title="auto" className="text-xs bg-white/10 px-3 rounded-xl shrink-0">✨</button>
+            </div>
+          </div>
+          <Field ltr label={a('coverUrl')} value={form.cover} onChange={(e) => setForm({ ...form, cover: e.target.value })} placeholder="https://..." />
+          <Field ltr label={a('catEn')} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Fat Loss" />
+          <Field label={a('catAr')} value={form.category_ar} onChange={(e) => setForm({ ...form, category_ar: e.target.value })} placeholder="تخسيس" />
+        </div>
+        <div className="mt-3 grid sm:grid-cols-2 gap-3">
+          <Area ltr label={a('excerptEn')} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} rows={2} />
+          <Area label={a('excerptAr')} value={form.excerpt_ar} onChange={(e) => setForm({ ...form, excerpt_ar: e.target.value })} rows={2} />
+        </div>
+        <div className="mt-3 grid sm:grid-cols-2 gap-3">
+          <Area ltr label={a('contentEn')} value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} rows={8} />
+          <Area label={a('contentAr')} value={form.content_ar} onChange={(e) => setForm({ ...form, content_ar: e.target.value })} rows={8} />
+        </div>
+        <div className="mt-3"><Field ltr label={a('tagsL')} value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} placeholder="nutrition, fat-loss" /></div>
+        <div className="flex flex-wrap gap-4 mt-3">
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.published} onChange={(e) => setForm({ ...form, published: e.target.checked })} /> {a('publishedL')}</label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.featured} onChange={(e) => setForm({ ...form, featured: e.target.checked })} /> {a('featuredL')}</label>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-3">
+          <Button onClick={save}><span className="inline-flex items-center gap-1.5">{editing ? <><Save size={16} /> {a('save')}</> : <><Plus size={16} /> {a('add')}</>}</span></Button>
+          {editing && <Button variant="secondary" onClick={resetForm}>{a('cancel')}</Button>}
+        </div>
+        <div className="mt-3"><BulkHint goData={goData} /></div>
+      </Card>
+      {list.length === 0 && <p className="text-sm text-stone-400">{a('emptyBlog')}</p>}
+      {list.map((b) => (
+        <Card key={b.id ?? b.slug} className="flex flex-col sm:flex-row sm:justify-between gap-3">
+          <div className="flex gap-3 min-w-0">
+            {b.cover && <img src={b.cover} className="w-16 h-16 rounded-xl object-cover shrink-0" alt="" />}
+            <div className="min-w-0">
+              <b className="text-white text-sm">{b.title || b.slug}</b>
+              <div className="text-xs text-stone-400 truncate">/{b.slug} • {b.category || '—'}</div>
+              <div className="flex gap-1.5 mt-1">
+                {!b.published && <span className="text-[10px] font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">DRAFT</span>}
+                {b.featured && <span className="text-[10px] font-bold bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full">FEATURED</span>}
+              </div>
+            </div>
+          </div>
+          <div className="flex gap-2 shrink-0 items-start">
+            <a href={`/blog/${b.slug}`} target="_blank" rel="noreferrer" className="text-xs bg-white/10 px-3 py-1.5 rounded-lg">View</a>
+            <button onClick={() => startEdit(b)} className="text-xs bg-white/10 px-3 py-1.5 rounded-lg">{a('edit')}</button>
+            <button onClick={() => confirm(a('confirmDelete')) && deleteBlog(b.id)} className="text-xs text-red-400 px-2 py-1.5">{a('delete')}</button>
+          </div>
+        </Card>
+      ))}
+    </div>
+  )
+}
+
 function FileStatus() {
   const { t } = useT()
   const supabaseStatus = useSiteStore((s) => s.supabaseStatus)
@@ -543,7 +641,7 @@ function DataTab() {
       try {
         const parsed = JSON.parse(ev.target.result)
         const current = JSON.parse(useSiteStore.getState().exportJSON())
-        const known = ['coach', 'packages', 'transformations', 'testimonials', 'services', 'supplements']
+        const known = ['coach', 'packages', 'transformations', 'testimonials', 'services', 'supplements', 'blogs']
         if (!parsed || typeof parsed !== 'object' || !known.some((k) => parsed[k] !== undefined)) {
           setMsg(a('invalidFile'))
           return
@@ -569,6 +667,7 @@ function DataTab() {
     add('Testimonials', s.testimonials.map(toSheetRow.testimonials))
     add('Services', s.services.map(toSheetRow.services))
     add('Supplements', s.supplements.map(toSheetRow.supplements))
+    add('Blogs', (s.blogs || []).map(toSheetRow.blogs))
     XLSX.writeFile(wb, 'site-export.xlsx')
   }
 
@@ -645,7 +744,7 @@ function DataTab() {
           try {
             const parsed = JSON.parse(text)
             const current = JSON.parse(useSiteStore.getState().exportJSON())
-            const known = ['coach', 'packages', 'transformations', 'testimonials', 'services', 'supplements']
+            const known = ['coach', 'packages', 'transformations', 'testimonials', 'services', 'supplements', 'blogs']
             if (!parsed || typeof parsed !== 'object' || !known.some((k) => parsed[k] !== undefined)) {
               setMsg(a('invalidFile'))
               return
@@ -745,6 +844,7 @@ const TAB_DEFS = [
   { key: 'testimonials', Icon: MessageCircle },
   { key: 'services', Icon: Zap },
   { key: 'supplements', Icon: Pill },
+  { key: 'blog', Icon: Newspaper },
   { key: 'security', Icon: ShieldCheck },
   { key: 'data', Icon: Save },
 ]
@@ -755,6 +855,7 @@ const COUNT_KEYS = {
   testimonials: 'testimonials',
   services: 'services',
   supplements: 'supplements',
+  blog: 'blogs',
 }
 
 export default function AdminDashboard() {
@@ -770,6 +871,7 @@ export default function AdminDashboard() {
     testimonials: s.testimonials.length,
     services: s.services.length,
     supplements: s.supplements.length,
+    blogs: (s.blogs || []).length,
   }))
   const go = (key) => {
     setTab(key)
@@ -832,6 +934,7 @@ export default function AdminDashboard() {
           {tab === 'testimonials' && <TestimonialsTab goData={() => go('data')} />}
           {tab === 'services' && <ServicesTab goData={() => go('data')} />}
           {tab === 'supplements' && <SupplementsTab goData={() => go('data')} />}
+          {tab === 'blog' && <BlogsTab goData={() => go('data')} />}
           {tab === 'security' && <SecurityTab />}
           {tab === 'data' && <DataTab />}
         </div>

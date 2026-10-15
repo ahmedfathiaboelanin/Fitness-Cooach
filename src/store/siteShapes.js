@@ -7,6 +7,17 @@
  */
 import siteDefaults from '../data/site.json'
 
+export function slugify(v) {
+  return String(v || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 80) || `post-${Date.now().toString(36)}`
+}
+
 export function toArray(v, fallback = []) {
   if (Array.isArray(v)) return v
   if (v == null || v === '') return fallback
@@ -111,6 +122,27 @@ export function normSupplement(r) {
   }
 }
 
+export function normBlog(r) {
+  const tagsRaw = r.tags
+  const tags = Array.isArray(tagsRaw)
+    ? tagsRaw
+    : String(tagsRaw || '').split(',').map((x) => String(x).trim()).filter(Boolean)
+  return {
+    id: r.id,
+    slug: toStr(r.slug) || slugify(r.title),
+    title: toStr(r.title), title_ar: toStr(r.title_ar),
+    excerpt: toStr(r.excerpt), excerpt_ar: toStr(r.excerpt_ar),
+    content: toStr(r.content), content_ar: toStr(r.content_ar),
+    cover: toStr(r.cover),
+    category: toStr(r.category), category_ar: toStr(r.category_ar),
+    tags,
+    published: r.published == null ? true : toBool(r.published),
+    featured: toBool(r.featured),
+    created_at: r.created_at || null,
+    updated_at: r.updated_at || null,
+  }
+}
+
 /* ---------------- UI objects -> DB payloads ---------------- */
 
 export function coachToDb(c) {
@@ -178,5 +210,20 @@ export function supplementToDb(s) {
     category: toStr(s.category), category_ar: toStr(s.category_ar),
     description: toStr(s.description), description_ar: toStr(s.description_ar),
     image: toStr(s.image),
+  }
+}
+
+export function blogToDb(b) {
+  return {
+    slug: toStr(b.slug) || slugify(b.title),
+    title: toStr(b.title), title_ar: toStr(b.title_ar),
+    excerpt: toStr(b.excerpt), excerpt_ar: toStr(b.excerpt_ar),
+    content: toStr(b.content), content_ar: toStr(b.content_ar),
+    cover: toStr(b.cover),
+    category: toStr(b.category), category_ar: toStr(b.category_ar),
+    tags: Array.isArray(b.tags) ? b.tags : toArray(b.tags),
+    published: b.published == null ? true : toBool(b.published),
+    featured: toBool(b.featured),
+    updated_at: new Date().toISOString(),
   }
 }

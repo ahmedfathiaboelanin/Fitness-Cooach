@@ -90,7 +90,7 @@
   },
   "packages": [
     {
-      "id": "pkg-xls-mv1h6a60-14",
+      "id": 27,
       "name": "Online Coaching",
       "name_ar": "التدريب الأونلاين",
       "price": "1500 EGP",
@@ -117,7 +117,7 @@
       "highlight": true
     },
     {
-      "id": "pkg-xls-mv1h6a60-15",
+      "id": 28,
       "name": "1-1 Gym Sessions",
       "name_ar": "تمارين برايفت في الجيم",
       "price": "250 EGP",
@@ -144,7 +144,7 @@
       "highlight": false
     },
     {
-      "id": "pkg-xls-mv1h6a60-16",
+      "id": 29,
       "name": "Hybrid Transformation",
       "name_ar": "التحول الشامل",
       "price": "4000 EGP",
@@ -173,7 +173,7 @@
   ],
   "transformations": [
     {
-      "id": "res-xls-mv1h6a60-18",
+      "id": 19,
       "name": "Ahmed — Fat Loss",
       "name_ar": "أحمد — تخسيس",
       "result": "-14 kg in 16 weeks",
@@ -185,7 +185,7 @@
       "text_ar": "تدريب أونلاين + خطوات يومية. بدون دايت قاسي، بس استمرارية."
     },
     {
-      "id": "res-xls-mv1h6a60-19",
+      "id": 20,
       "name": "Omar — Muscle Gain",
       "name_ar": "عمر — زيادة عضلات",
       "result": "+6 kg lean muscle",
@@ -197,7 +197,7 @@
       "text_ar": "جدول ضخامة 4 أيام مع زيادة تدريجية ومتابعة تغذية."
     },
     {
-      "id": "res-xls-mv1h6a60-20",
+      "id": 21,
       "name": "Youssef — Strength",
       "name_ar": "يوسف — قوة",
       "result": "100 → 140 kg squat",
@@ -319,6 +319,69 @@
       "description": "Joint and heart support for hard trainers.",
       "description_ar": "دعم المفاصل والقلب للرياضيين.",
       "image": "https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&q=80"
+    }
+  ],
+  "blogs": [
+    {
+      "id": "blog-mv9k55a9-4096",
+      "created_at": "2026-10-15T13:11:30.561Z",
+      "slug": "fahjs",
+      "title": "fahjs",
+      "title_ar": "jhasjkdfh",
+      "excerpt": "dfhasjkdhdfjkashdkj",
+      "excerpt_ar": "asjdfbkjashdfjkh",
+      "content": "jashdflkajhsdjkfhajksdhfjkash",
+      "content_ar": "ajshdfkjashdfkljhaskjldhfkajshd\nfasdjfh",
+      "cover": "fjskdh",
+      "category": "fjash",
+      "category_ar": "jhasdjkfh",
+      "tags": [
+        "afsdf",
+        "asdfa",
+        "fasdgadfg"
+      ],
+      "published": true,
+      "featured": true
+    },
+    {
+      "id": 1,
+      "slug": "fat-loss-basics",
+      "title": "Fat Loss Basics: Eat More, Move More",
+      "title_ar": "أساسيات التخسيس: كُل صح واتحرك أكتر",
+      "excerpt": "Why crash diets fail and what actually works for sustainable fat loss.",
+      "excerpt_ar": "ليه الدايت القاسي بيفشل وإيه اللي بيشتغل فعلاً للتخسيس المستمر.",
+      "content": "Fat loss is simple but not easy.\n\n1. Eat in a small calorie deficit (300-500 kcal).\n2. Protein 1.6-2.2g per kg.\n3. Lift 3-4x per week.\n4. Walk 8-10k steps daily.\n5. Sleep 7-8 hours.\n\nNo crash diets. Just consistency for 12-16 weeks.",
+      "content_ar": "التخسيس بسيط لكن مش سهل.\n\n1. عجز سعرات بسيط (300-500).\n2. بروتين 1.6-2.2 جم لكل كجم.\n3. حديد 3-4 مرات أسبوعياً.\n4. مشي 8-10 آلاف خطوة يومياً.\n5. نوم 7-8 ساعات.\n\nبدون دايت قاسي. بس استمرارية 12-16 أسبوع.",
+      "cover": "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80",
+      "category": "Fat Loss",
+      "category_ar": "تخسيس",
+      "tags": [
+        "nutrition",
+        "fat-loss"
+      ],
+      "published": true,
+      "featured": true,
+      "created_at": "2026-01-10T10:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "slug": "muscle-gain-mistakes",
+      "title": "5 Muscle Gain Mistakes Beginners Make",
+      "title_ar": "5 أخطاء بتضيع زيادة العضلات للمبتدئين",
+      "excerpt": "You don't need more supplements — you need progressive overload and food.",
+      "excerpt_ar": "مش محتاج مكملات أكتر — محتاج زيادة تدريجية وأكل كفاية.",
+      "content": "1. Program hopping every week.\n2. Eating too little protein.\n3. Skipping legs.\n4. Bad form, ego lifting.\n5. No sleep.\n\nFix these and you will grow.",
+      "content_ar": "1. تغيير البرنامج كل أسبوع.\n2. بروتين قليل.\n3. إهمال الرجل.\n4. تكنيك غلط وأوزان منظرة.\n5. نوم قليل.\n\nصلّح دول وهتزيد.",
+      "cover": "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&q=80",
+      "category": "Muscle Gain",
+      "category_ar": "زيادة عضلات",
+      "tags": [
+        "training",
+        "muscle"
+      ],
+      "published": true,
+      "featured": false,
+      "created_at": "2026-02-01T10:00:00.000Z"
     }
   ]
 }

@@ -122,6 +122,21 @@ function mapSupplement(s) {
   }
 }
 
+function mapBlog(b) {
+  const slug = str(b.slug) || str(b.title).toLowerCase().trim().replace(/\s+/g, '-').slice(0, 80) || `post-${Date.now().toString(36)}`
+  return {
+    slug,
+    title: str(b.title), title_ar: str(b.title_ar),
+    excerpt: str(b.excerpt), excerpt_ar: str(b.excerpt_ar),
+    content: str(b.content), content_ar: str(b.content_ar),
+    cover: str(b.cover),
+    category: str(b.category), category_ar: str(b.category_ar),
+    tags: arr(b.tags),
+    published: b.published == null ? true : bool(b.published),
+    featured: bool(b.featured),
+  }
+}
+
 // ---------- run ----------
 console.log('🌱 Seeding Supabase:', URL)
 console.log('   source: src/data/site.json')
@@ -138,7 +153,7 @@ try {
     if (t2.error) throw new Error('Missing tables. Run supabase.sql first. (' + t2.error.message + ')')
   }
 
-  for (const t of ['coach', 'packages', 'transformations', 'testimonials', 'services', 'supplements']) {
+  for (const t of ['coach', 'packages', 'transformations', 'testimonials', 'services', 'supplements', 'blogs']) {
     await wipe(t)
   }
   console.log('  🧹 cleared old rows')
@@ -149,6 +164,7 @@ try {
   await insertMany('testimonials', (site.testimonials || []).map(mapTestimonial))
   await insertMany('services', (site.services || []).map(mapService))
   await insertMany('supplements', (site.supplements || []).map(mapSupplement))
+  await insertMany('blogs', (site.blogs || []).map(mapBlog))
 
   console.log('\n✅ Seed complete — refresh the site, it now reads from Supabase.')
 } catch (e) {

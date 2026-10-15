@@ -44,6 +44,7 @@ export function matchSheet(name) {
   if (/testimonial|review|رأي|اراء|تقييم/.test(n)) return 'testimonials'
   if (/service|خدم/.test(n)) return 'services'
   if (/supplement|مكمل/.test(n)) return 'supplements'
+  if (/blog|article|مقال|مدون/.test(n)) return 'blogs'
   return null
 }
 
@@ -136,6 +137,30 @@ export function buildSupplements(rows) {
   })).filter((x) => x.name)
 }
 
+export function buildBlogs(rows) {
+  const pick = (r, ...ks) => rowGet(r, ks)
+  return rows.map((r) => {
+    const title = pick(r, 'title', 'العنوان')
+    const slugRaw = pick(r, 'slug', 'الرابط')
+    return {
+      id: `blog-xls-${stamp()}`,
+      slug: slugRaw || title.toLowerCase().trim().replace(/\s+/g, '-').slice(0, 80),
+      title,
+      title_ar: pick(r, 'title_ar', 'العنوان بالعربية'),
+      excerpt: pick(r, 'excerpt', 'الملخص'),
+      excerpt_ar: pick(r, 'excerpt_ar', 'الملخص بالعربية'),
+      content: pick(r, 'content', 'المحتوى'),
+      content_ar: pick(r, 'content_ar', 'المحتوى بالعربية'),
+      cover: pick(r, 'cover', 'image', 'img', 'الصورة'),
+      category: pick(r, 'category', 'الفئة'),
+      category_ar: pick(r, 'category_ar', 'الفئة بالعربية'),
+      tags: String(pick(r, 'tags', 'الوسوم') || '').split(',').map((x) => x.trim()).filter(Boolean),
+      published: pick(r, 'published', 'منشور') === '' ? true : truthy(pick(r, 'published', 'منشور')),
+      featured: truthy(pick(r, 'featured', 'مميز')),
+    }
+  }).filter((x) => x.title)
+}
+
 /* ---------------- export-row mappers (store objects -> sheet rows) ---------------- */
 
 export const toSheetRow = {
@@ -164,6 +189,14 @@ export const toSheetRow = {
     category: x.category, category_ar: x.category_ar,
     description: x.description, description_ar: x.description_ar, image: x.image,
   }),
+  blogs: (b) => ({
+    slug: b.slug, title: b.title, title_ar: b.title_ar,
+    excerpt: b.excerpt, excerpt_ar: b.excerpt_ar,
+    content: b.content, content_ar: b.content_ar,
+    cover: b.cover, category: b.category, category_ar: b.category_ar,
+    tags: (b.tags || []).join(', '),
+    published: b.published ? 'yes' : '', featured: b.featured ? 'yes' : '',
+  }),
 }
 
 export const builders = {
@@ -172,6 +205,7 @@ export const builders = {
   testimonials: buildTestimonials,
   services: buildServices,
   supplements: buildSupplements,
+  blogs: buildBlogs,
 }
 
 export const sheetNames = {
@@ -180,6 +214,7 @@ export const sheetNames = {
   testimonials: 'Testimonials',
   services: 'Services',
   supplements: 'Supplements',
+  blogs: 'Blogs',
 }
 
 /* ---------------- coach sheet ---------------- */
@@ -304,6 +339,8 @@ export function templateRow(tableKey) {
       return { title: 'Online Coaching', title_ar: 'تدريب أونلاين', desc: 'Train anywhere...', desc_ar: 'اتمرن من أي مكان...', icon: 'laptop' }
     case 'supplements':
       return { name: 'Whey Protein 2kg', name_ar: 'واي بروتين 2 كجم', price: '2400 EGP', category: 'Protein', category_ar: 'بروتين', description: '24g protein per scoop.', description_ar: '24 جم بروتين لكل سكوب.', image: 'https://...' }
+    case 'blogs':
+      return { slug: 'fat-loss-basics', title: 'Fat Loss Basics', title_ar: 'أساسيات التخسيس', excerpt: 'Lose fat without crash diets.', excerpt_ar: 'خس بدون دايت قاسي.', content: 'Full article text…', content_ar: 'نص المقال كامل…', cover: 'https://...', category: 'Fat Loss', category_ar: 'تخسيس', tags: 'nutrition, fat-loss', published: 'yes', featured: '' }
     default:
       return {}
   }

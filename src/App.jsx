@@ -9,6 +9,8 @@ import Results from './pages/Results'
 import Packages from './pages/Packages'
 import Contact from './pages/Contact'
 import Supplements from './pages/Supplements'
+import Blog from './pages/Blog'
+import BlogPost from './pages/BlogPost'
 import Booking from './pages/Booking'
 import Calculator from './pages/Calculator'
 import AdminLogin from './pages/AdminLogin'
@@ -63,6 +65,8 @@ function SiteRoutes() {
             <Route path="/booking" element={<PageTurn><Booking /></PageTurn>} />
             <Route path="/calculator" element={<PageTurn><Calculator /></PageTurn>} />
             <Route path="/supplements" element={<PageTurn><Supplements /></PageTurn>} />
+            <Route path="/blog" element={<PageTurn><Blog /></PageTurn>} />
+            <Route path="/blog/:slug" element={<PageTurn><BlogPost /></PageTurn>} />
         <Route path="*" element={<PageTurn><div className="bg-stone-950 text-white min-h-screen"><div className="container-x py-20 text-center"><h1 className="font-display text-5xl">404</h1><p className="text-stone-400">Page not found</p></div></div></PageTurn>} />
       </Routes>
     </AnimatePresence>
